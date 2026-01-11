@@ -1,0 +1,14 @@
+/* Hui-iconfont 图标字体 */
+@font-face {
+  font-family: 'Hui-iconfont';
+  src: url('data:application/font-woff;charset=utf-8;base64,d09GRgABAAAAAAWUAA0AAAAACDgAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABGRlRNAAABMAAAABwAAAAcZ/Z8mUdERUYAAAFMAAAAHAAAAB4AJwAPT1MvMgAAAWgAAABCAAAAYHUwSaNjbWFwAAABrAAAAEwAAABUABEBBWdhc3AAAAHwAAAACAAAAAj//wADZ2x5ZgAAAfgAAAFIAAABnIE0CttoZWFkAAADQAAAADAAAAA2B7UdCmhoZWEAAANwAAAAHQAAACQD5QOGaG10eAAAA5AAAAAgAAAAIAZAAGpsb2NhAAADsAAAABIAAAASATgBVm1heHAAAAPEAAAAHwAAACAADQBHbmFtZQAAA+QAAADcAAABkvkQZPBwb3N0AAAE') format('woff');
+}
+
+.Hui-iconfont {
+  font-family: 'Hui-iconfont' !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+

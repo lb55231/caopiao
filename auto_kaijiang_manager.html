@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自动开奖系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4caf50;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .control-panel {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .btn-success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .latest-results {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .latest-results h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .result-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-expect {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .logs {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .logs h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .log-item {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .log-time {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .log-success { color: #4caf50; }
+        .log-info { color: #2196F3; }
+        .log-error { color: #f44336; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎰 自动开奖系统</h1>
+            <div class="status">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">准备就绪</span>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <div class="control-buttons">
+                <button class="btn btn-success" id="startBtn" onclick="startAuto()">▶ 启动自动开奖 (每10秒)</button>
+                <button class="btn btn-danger" id="stopBtn" onclick="stopAuto()" disabled>⏸ 停止</button>
+                <button class="btn btn-primary" onclick="runOnce()">🎲 立即开奖+结算</button>
+                <button class="btn btn-warning" onclick="runSettlement()">💰 仅结算投注</button>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">总生成数</div>
+                <div class="stat-value" id="totalGenerated">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">总跳过数</div>
+                <div class="stat-value" id="totalSkipped">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">运行次数</div>
+                <div class="stat-value" id="runCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">最后运行</div>
+                <div class="stat-value" id="lastRun" style="font-size: 16px;">--:--:--</div>
+            </div>
+        </div>
+
+        <div class="latest-results">
+            <h2>📊 最新开奖结果（最近5条）</h2>
+            <div id="latestResults">暂无数据</div>
+        </div>
+
+        <div class="logs">
+            <h2>📝 运行日志</h2>
+            <div id="logContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        let autoTimer = null;
+        let totalGenerated = 0;
+        let totalSkipped = 0;
+        let runCount = 0;
+
+        const API_URL = 'http://127.0.0.1:8000/api/lottery/auto_kaijiang';
+        const SETTLEMENT_API_URL = 'http://127.0.0.1:8000/api/lottery/settlement';
+
+        function addLog(message, type = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item log-' + type;
+            
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('zh-CN');
+            
+            logItem.innerHTML = '<span>' + message + '</span><span class="log-time">' + timeStr + '</span>';
+            logContainer.insertBefore(logItem, logContainer.firstChild);
+            
+            while (logContainer.children.length > 50) {
+                logContainer.removeChild(logContainer.lastChild);
+            }
+        }
+
+        function updateStats(data) {
+            // 兼容新旧数据格式
+            const generated = data.total_generated || data.generated || 0;
+            const skipped = data.total_skipped || data.skipped || 0;
+            
+            totalGenerated += generated;
+            totalSkipped += skipped;
+            runCount++;
+            
+            document.getElementById('totalGenerated').textContent = totalGenerated;
+            document.getElementById('totalSkipped').textContent = totalSkipped;
+            document.getElementById('runCount').textContent = runCount;
+            document.getElementById('lastRun').textContent = data.timestamp.split(' ')[1];
+        }
+
+        function updateLatestResults(data) {
+            const container = document.getElementById('latestResults');
+            
+            // 显示最新开奖结果
+            if (data.latest_results && Object.keys(data.latest_results).length > 0) {
+                let html = '';
+                
+                for (const cpname in data.latest_results) {
+                    const lotteryData = data.latest_results[cpname];
+                    html += '<div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">';
+                    html += '<div style="margin-bottom: 8px; color: #667eea; font-weight: bold; font-size: 14px;">📌 ' + lotteryData.title + '</div>';
+                    
+                    lotteryData.results.forEach(function(item, index) {
+                        const codes = item.opencode.split(',');
+                        let displayInfo = '';
+                        
+                        // K3类彩票显示和值和大小单双
+                        if (cpname.indexOf('k3') !== -1 && codes.length === 3) {
+                            const sum = codes.reduce((a, b) => parseInt(a) + parseInt(b), 0);
+                            const big = sum > 10 ? '普货' : '精品';
+                            const odd = sum % 2 === 0 ? '一件' : '多件';
+                            displayInfo = ' <span style="color: #999;">和值: ' + sum + '</span> <span style="color: #4caf50; font-weight: bold;">' + big + ' ' + odd + '</span>';
+                        }
+                        
+                        html += '<div class="result-item">';
+                        html += '<span class="result-expect">期号: ' + item.expect + '</span>';
+                        html += '<span>开奖: ' + item.opencode + '</span>';
+                        html += displayInfo;
+                        html += '</div>';
+                    });
+                    
+                    html += '</div>';
+                }
+                
+                container.innerHTML = html;
+                return;
+            }
+            
+            // 如果有 details 字段（生成统计），显示彩票列表
+            if (data.details && data.details.length > 0) {
+                let html = '<div style="margin-bottom: 10px; color: #667eea; font-weight: bold;">本次开奖：共 ' + data.lottery_count + ' 种彩票</div>';
+                data.details.forEach(function(lottery) {
+                    html += '<div class="result-item">';
+                    html += '<span class="result-expect">' + lottery.title + ' (' + lottery.cpname + ')</span>';
+                    html += '<span>生成: ' + lottery.generated + ' 条</span>';
+                    html += '<span>跳过: ' + lottery.skipped + ' 条</span>';
+                    html += '</div>';
+                });
+                container.innerHTML = html;
+                return;
+            }
+            
+            // 兼容旧格式（latest 字段）
+            const latest = data.latest || [];
+            if (!latest || latest.length === 0) {
+                container.innerHTML = '暂无数据';
+                return;
+            }
+            
+            let html = '';
+            latest.forEach(function(item) {
+                html += '<div class="result-item">';
+                html += '<span class="result-expect">期号: ' + item.expect + '</span>';
+                html += '<span>开奖: ' + item.opencode + '</span>';
+                if (item.sum) {
+                    html += '<span>和值: ' + item.sum + '</span>';
+                }
+                if (item.display) {
+                    html += '<span style="color: #4caf50; font-weight: bold;">' + item.display + '</span>';
+                }
+                html += '</div>';
+            });
+            container.innerHTML = html;
+        }
+
+        async function runOnce() {
+            try {
+                addLog('正在生成开奖数据...', 'info');
+                
+                const response = await fetch(API_URL);
+                const result = await response.json();
+                
+                if (result.code === 200) {
+                    updateStats(result.data);
+                    updateLatestResults(result.data);
+                    
+                    const generated = result.data.total_generated || result.data.generated || 0;
+                    const skipped = result.data.total_skipped || result.data.skipped || 0;
+                    
+                    if (generated > 0) {
+                        addLog('✅ 生成成功！新增 ' + generated + ' 条，跳过 ' + skipped + ' 条', 'success');
+                        
+                        // 自动调用结算API
+                        addLog('正在结算投注记录...', 'info');
+                        setTimeout(async () => {
+                            try {
+                                const settlementResponse = await fetch(SETTLEMENT_API_URL);
+                                const settlementResult = await settlementResponse.json();
+                                
+                                if (settlementResult.code === 200) {
+                                    const settledCount = settlementResult.data.settled_count || 0;
+                                    if (settledCount > 0) {
+                                        addLog('💰 结算完成！已结算 ' + settledCount + ' 条投注记录', 'success');
+                                    } else {
+                                        addLog('ℹ️ 暂无需要结算的投注', 'info');
+                                    }
+                                } else {
+                                    addLog('⚠️ 结算失败: ' + settlementResult.msg, 'error');
+                                }
+                            } catch (error) {
+                                addLog('⚠️ 结算请求失败: ' + error.message, 'error');
+                            }
+                        }, 1000); // 延迟1秒执行结算，确保开奖数据已保存
+                    } else {
+                        addLog('ℹ️ 无新数据，跳过 ' + skipped + ' 条已存在记录', 'info');
+                    }
+                } else {
+                    addLog('❌ 开奖失败: ' + result.msg, 'error');
+                }
+            } catch (error) {
+                addLog('❌ 请求失败: ' + error.message, 'error');
+                addLog('⚠️ 请确保 PHP 服务器运行在 http://127.0.0.1:8000/', 'error');
+            }
+        }
+
+        async function runSettlement() {
+            try {
+                addLog('正在结算投注记录...', 'info');
+                
+                const response = await fetch(SETTLEMENT_API_URL);
+                const result = await response.json();
+                
+                if (result.code === 200) {
+                    const settledCount = result.data.settled_count || 0;
+                    const periods = result.data.periods || [];
+                    
+                    if (settledCount > 0) {
+                        addLog('💰 结算完成！已结算 ' + settledCount + ' 条投注记录', 'success');
+                        periods.forEach(function(p) {
+                            addLog('  └─ 期号 ' + p.expect + '：' + p.count + ' 条 (开奖: ' + p.opencode + ')', 'info');
+                        });
+                    } else {
+                        addLog('ℹ️ 暂无需要结算的投注', 'info');
+                    }
+                } else {
+                    addLog('❌ 结算失败: ' + result.msg, 'error');
+                }
+            } catch (error) {
+                addLog('❌ 结算请求失败: ' + error.message, 'error');
+                addLog('⚠️ 请确保 PHP 服务器运行在 http://127.0.0.1:8000/', 'error');
+            }
+        }
+
+        function startAuto() {
+            if (autoTimer) return;
+            
+            addLog('🚀 启动自动开奖系统 (每10秒)', 'success');
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
+            document.getElementById('statusDot').style.background = '#4caf50';
+            document.getElementById('statusText').textContent = '运行中 - 每10秒自动开奖';
+            
+            runOnce();
+            autoTimer = setInterval(runOnce, 10000);
+        }
+
+        function stopAuto() {
+            if (!autoTimer) return;
+            
+            clearInterval(autoTimer);
+            autoTimer = null;
+            
+            addLog('⏸ 停止自动开奖系统', 'info');
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            document.getElementById('statusDot').style.background = '#999';
+            document.getElementById('statusText').textContent = '已停止';
+        }
+
+        window.addEventListener('load', function() {
+            addLog('📱 系统初始化完成，点击"启动自动开奖"按钮开始', 'success');
+        });
+    </script>
+</body>
+</html>
+

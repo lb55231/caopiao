@@ -1,0 +1,228 @@
+<?php
+/**
+ * 统一入口文件
+ * 处理所有 API 路由
+ */
+
+// CORS 跨域配置
+header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, token');
+
+// 处理 OPTIONS 预检请求
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+// 引入公共类
+require_once __DIR__ . '/common/Database.php';
+
+// 获取请求URI
+$requestUri = $_SERVER['REQUEST_URI'];
+$scriptName = $_SERVER['SCRIPT_NAME'];
+
+// 解析路由
+$route = '';
+if (strpos($requestUri, '/api/') !== false) {
+    // 提取 /api/ 后面的部分
+    preg_match('#/api/(.+?)(\?|$)#', $requestUri, $matches);
+    $route = $matches[1] ?? '';
+} else {
+    // 如果不是API请求，返回欢迎信息
+    echo json_encode([
+        'code' => 200,
+        'msg' => '彩票系统API服务',
+        'version' => '1.0.0',
+        'time' => date('Y-m-d H:i:s')
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+    // 路由映射
+    $routes = [
+        // 用户端API
+        'user/login' => __DIR__ . '/api/user/login.php',
+        'user/register' => __DIR__ . '/api/user/register.php',
+        'user/info' => __DIR__ . '/api/user/info.php',
+        'user/profile' => $_SERVER['REQUEST_METHOD'] === 'GET' 
+            ? __DIR__ . '/api/user/profile.php'
+            : __DIR__ . '/api/user/profile_update.php',
+        'user/change-password' => __DIR__ . '/api/user/change_password.php',
+        'user/bet_records' => __DIR__ . '/api/user/bet_records.php',
+        'user/account_records' => __DIR__ . '/api/user/account_records.php',
+        
+        // 彩票API
+        'lottery/list' => __DIR__ . '/api/lottery/list.php',
+        'lottery/notice' => __DIR__ . '/api/lottery/notice.php',
+        'lottery/ranking' => __DIR__ . '/api/lottery/ranking.php',
+        'lottery/list' => __DIR__ . '/api/lottery/list.php',
+        'lottery/auto_kaijiang' => __DIR__ . '/api/lottery/auto_kaijiang.php',
+        'lottery/settlement' => __DIR__ . '/api/lottery/settlement.php',
+        
+        // 游戏API
+        'game/period' => __DIR__ . '/api/game/period.php',
+        'game/plays' => __DIR__ . '/api/game/plays.php',
+        'game/bet' => __DIR__ . '/api/game/bet.php',
+        
+        // 管理员API
+        'admin/login' => __DIR__ . '/api/admin/login.php',
+        'admin/info' => __DIR__ . '/api/admin/info.php',
+        'admin/statistics' => __DIR__ . '/api/admin/statistics.php',
+        'admin/members' => __DIR__ . '/api/admin/members.php',
+        'admin/bets' => __DIR__ . '/api/admin/bets.php',
+        
+        // 彩种管理API
+        'admin/lottery/types' => __DIR__ . '/api/admin/lottery_types.php',
+        'admin/lottery/type/add' => __DIR__ . '/api/admin/lottery_type_add.php',
+        'admin/lottery/type/update' => __DIR__ . '/api/admin/lottery_type_update.php',
+        'admin/lottery/type/delete' => __DIR__ . '/api/admin/lottery_type_delete.php',
+        'admin/lottery/toggle-status' => __DIR__ . '/api/admin/lottery_toggle_status.php',
+        'admin/lottery/save-order' => __DIR__ . '/api/admin/lottery_save_order.php',
+        
+        // 开奖管理API
+        'admin/lottery/results' => __DIR__ . '/api/admin/lottery_results.php',
+        'admin/lottery/result/add' => __DIR__ . '/api/admin/lottery_result_add.php',
+        'admin/lottery/result/delete' => __DIR__ . '/api/admin/lottery_result_delete.php',
+        
+        // 游戏记录API
+        'admin/bet/records' => __DIR__ . '/api/admin/bet_records.php',
+        
+        // 设置开奖API
+        'admin/yukaijiang' => __DIR__ . '/api/admin/yukaijiang.php',
+        'admin/ykjbaocun' => __DIR__ . '/api/admin/ykjbaocun.php',
+        
+        // 系统设置API
+        'admin/settings' => __DIR__ . '/api/admin/settings.php',
+        'admin/settings/save' => __DIR__ . '/api/admin/settings_save.php',
+        
+        // 提款银行API
+        'admin/sysbank/list' => __DIR__ . '/api/admin/sysbank_list.php',
+        'admin/sysbank/add' => __DIR__ . '/api/admin/sysbank_add.php',
+        'admin/sysbank/update' => __DIR__ . '/api/admin/sysbank_update.php',
+        'admin/sysbank/delete' => __DIR__ . '/api/admin/sysbank_delete.php',
+        'admin/sysbank/toggle-status' => __DIR__ . '/api/admin/sysbank_toggle_status.php',
+        
+        // 提款银行API（linebanklist表）
+        'admin/linebank/list' => __DIR__ . '/api/admin/linebank_list.php',
+        'admin/linebank/add' => __DIR__ . '/api/admin/linebank_add.php',
+        'admin/linebank/update' => __DIR__ . '/api/admin/linebank_update.php',
+        'admin/linebank/delete' => __DIR__ . '/api/admin/linebank_delete.php',
+        'admin/linebank/toggle-status' => __DIR__ . '/api/admin/linebank_toggle_status.php',
+        'admin/linebank/listorder' => __DIR__ . '/api/admin/linebank_listorder.php',
+        
+        // 存款方式配置API（payset表）
+        'admin/payset/list' => __DIR__ . '/api/admin/payset_list.php',
+        'admin/payset/add' => __DIR__ . '/api/admin/payset_add.php',
+        'admin/payset/update' => __DIR__ . '/api/admin/payset_update.php',
+        'admin/payset/delete' => __DIR__ . '/api/admin/payset_delete.php',
+        'admin/payset/toggle-status' => __DIR__ . '/api/admin/payset_toggle_status.php',
+        'admin/payset/listorder' => __DIR__ . '/api/admin/payset_listorder.php',
+        
+        // 充值记录API
+        'admin/recharge/list' => __DIR__ . '/api/admin/recharge_list.php',
+        'admin/recharge/audit' => __DIR__ . '/api/admin/recharge_audit.php',
+        'admin/recharge/delete' => __DIR__ . '/api/admin/recharge_delete.php',
+        
+        // 提现记录API
+        'admin/withdraw/list' => __DIR__ . '/api/admin/withdraw_list.php',
+        'admin/withdraw/audit' => __DIR__ . '/api/admin/withdraw_audit.php',
+        'admin/withdraw/delete' => __DIR__ . '/api/admin/withdraw_delete.php',
+        
+        // 用户充值提现API
+        'user/payset/list' => __DIR__ . '/api/user/payset_list.php',
+        'user/recharge/add' => __DIR__ . '/api/user/recharge_add.php',
+        'user/withdraw/add' => __DIR__ . '/api/user/withdraw_add.php',
+        
+        // 用户银行卡管理API
+        'user/bank/list' => __DIR__ . '/api/user/banklist.php',
+        'user/bank/add' => __DIR__ . '/api/user/bank_add.php',
+        'user/bank/delete' => __DIR__ . '/api/user/bank_delete.php',
+        'user/bank/set-default' => __DIR__ . '/api/user/bank_set_default.php',
+        
+        // 会员组管理API
+        'admin/membergroup/list' => __DIR__ . '/api/admin/membergroup_list.php',
+        'admin/membergroup/add' => __DIR__ . '/api/admin/membergroup_add.php',
+        'admin/membergroup/update' => __DIR__ . '/api/admin/membergroup_update.php',
+        'admin/membergroup/delete' => __DIR__ . '/api/admin/membergroup_delete.php',
+        'admin/membergroup/toggle_status' => __DIR__ . '/api/admin/membergroup_toggle_status.php',
+        
+        // 会员管理API
+        'admin/member/list' => __DIR__ . '/api/admin/member_list.php',
+        'admin/member/update' => __DIR__ . '/api/admin/member_update.php',
+        'admin/member/toggle_lock' => __DIR__ . '/api/admin/member_toggle_lock.php',
+        'admin/member/change_balance' => __DIR__ . '/api/admin/member_change_balance.php',
+        'admin/member/change_point' => __DIR__ . '/api/admin/member_change_point.php',
+        'admin/member/change_xima' => __DIR__ . '/api/admin/member_change_xima.php',
+        'admin/member/delete' => __DIR__ . '/api/admin/member_delete.php',
+        'admin/member/kickout' => __DIR__ . '/api/admin/member_kickout.php',
+        'admin/member/same_ip' => __DIR__ . '/api/admin/member_same_ip.php',
+        'admin/member/banks' => __DIR__ . '/api/admin/member_banks.php',
+        'admin/member/recharge_records' => __DIR__ . '/api/admin/member_recharge_records.php',
+        'admin/member/withdraw_records' => __DIR__ . '/api/admin/member_withdraw_records.php',
+        'admin/member/game_records' => __DIR__ . '/api/admin/member_game_records.php',
+        
+        // 账变记录API
+        'admin/fund/records' => __DIR__ . '/api/admin/fund_records.php',
+        
+        // 代理注册链接API
+        'admin/agent/links' => __DIR__ . '/api/admin/agent_links.php',
+        'admin/agent/link/add' => __DIR__ . '/api/admin/agent_link_add.php',
+        'admin/agent/link/delete' => __DIR__ . '/api/admin/agent_link_delete.php',
+        
+        // 登录日志API
+        'admin/loginlog/list' => __DIR__ . '/api/admin/loginlog_list.php',
+        
+        // 系统配置API（公开）
+        'system/config' => __DIR__ . '/api/system/config.php',
+        
+        // 文件上传API
+        'upload/image' => __DIR__ . '/api/upload/image.php',
+        
+        // 后续可以继续添加其他路由
+    ];
+
+// 检查路由是否存在
+if (!isset($routes[$route])) {
+    $matched = false;
+    $controller = null;
+    
+    // 动态路由映射表
+    $dynamicRoutes = [
+        // 会员管理相关
+        '#^admin/member/update/(\d+)$#' => __DIR__ . '/api/admin/member_update.php',
+        '#^admin/member/delete/(\d+)$#' => __DIR__ . '/api/admin/member_delete.php',
+        '#^admin/member/toggle_lock/(\d+)$#' => __DIR__ . '/api/admin/member_toggle_lock.php',
+        '#^admin/member/kickout/(\d+)$#' => __DIR__ . '/api/admin/member_kickout.php',
+        '#^admin/member/change_balance/(\d+)$#' => __DIR__ . '/api/admin/member_change_balance.php',
+        '#^admin/member/change_point/(\d+)$#' => __DIR__ . '/api/admin/member_change_point.php',
+        '#^admin/member/change_xima/(\d+)$#' => __DIR__ . '/api/admin/member_change_xima.php',
+        // 会员组相关
+        '#^admin/membergroup/update/(\d+)$#' => __DIR__ . '/api/admin/membergroup_update.php',
+        '#^admin/membergroup/delete/(\d+)$#' => __DIR__ . '/api/admin/membergroup_delete.php',
+        '#^admin/membergroup/toggle_status/(\d+)$#' => __DIR__ . '/api/admin/membergroup_toggle_status.php',
+    ];
+    
+    // 尝试匹配动态路由
+    foreach ($dynamicRoutes as $pattern => $file) {
+        if (preg_match($pattern, $route)) {
+            $controller = $file;
+            $matched = true;
+            break;
+        }
+    }
+    
+    if (!$matched) {
+        Database::error('接口不存在: ' . $route, 404);
+    }
+} else {
+    $controller = $routes[$route];
+}
+
+// 加载对应的控制器
+if (file_exists($controller)) {
+    require $controller;
+} else {
+    Database::error('接口文件不存在', 404);
+}

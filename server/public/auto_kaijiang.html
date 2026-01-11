@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自动开奖系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4caf50;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .control-panel {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .logs {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .logs h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .log-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .log-item:last-child {
+            border-bottom: none;
+        }
+
+        .log-time {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .log-success {
+            color: #4caf50;
+        }
+
+        .log-info {
+            color: #2196F3;
+        }
+
+        .log-error {
+            color: #f44336;
+        }
+
+        .latest-results {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .latest-results h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .result-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-expect {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .result-code {
+            font-family: monospace;
+            color: #333;
+        }
+
+        .result-display {
+            color: #4caf50;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1>🎰 自动开奖系统</h1>
+            <div class="status">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">运行中 - 每10秒自动开奖</span>
+            </div>
+        </div>
+
+        <!-- 控制面板 -->
+        <div class="control-panel">
+            <div class="control-buttons">
+                <button class="btn btn-success" id="startBtn" onclick="startAuto()">▶ 启动自动开奖</button>
+                <button class="btn btn-danger" id="stopBtn" onclick="stopAuto()" disabled>⏸ 停止自动开奖</button>
+                <button class="btn btn-primary" onclick="runOnce()">🎲 手动开奖一次</button>
+            </div>
+        </div>
+
+        <!-- 统计卡片 -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">总生成数</div>
+                <div class="stat-value" id="totalGenerated">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">总跳过数</div>
+                <div class="stat-value" id="totalSkipped">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">运行次数</div>
+                <div class="stat-value" id="runCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">最后运行</div>
+                <div class="stat-value" id="lastRun" style="font-size: 16px; color: #999;">--:--:--</div>
+            </div>
+        </div>
+
+        <!-- 最新开奖结果 -->
+        <div class="latest-results">
+            <h2>📊 最新开奖结果</h2>
+            <div id="latestResults"></div>
+        </div>
+
+        <!-- 日志 -->
+        <div class="logs">
+            <h2>📝 运行日志</h2>
+            <div id="logContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        let autoTimer = null;
+        let totalGenerated = 0;
+        let totalSkipped = 0;
+        let runCount = 0;
+
+        // 添加日志
+        function addLog(message, type = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            const logItem = document.createElement('div');
+            logItem.className = `log-item log-${type}`;
+            
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('zh-CN');
+            
+            logItem.innerHTML = `
+                <span>${message}</span>
+                <span class="log-time">${timeStr}</span>
+            `;
+            
+            logContainer.insertBefore(logItem, logContainer.firstChild);
+            
+            // 最多保留50条日志
+            while (logContainer.children.length > 50) {
+                logContainer.removeChild(logContainer.lastChild);
+            }
+        }
+
+        // 更新统计
+        function updateStats(data) {
+            totalGenerated += data.generated;
+            totalSkipped += data.skipped;
+            runCount++;
+            
+            document.getElementById('totalGenerated').textContent = totalGenerated;
+            document.getElementById('totalSkipped').textContent = totalSkipped;
+            document.getElementById('runCount').textContent = runCount;
+            document.getElementById('lastRun').textContent = data.timestamp.split(' ')[1];
+        }
+
+        // 更新最新结果
+        function updateLatestResults(latest) {
+            const container = document.getElementById('latestResults');
+            container.innerHTML = '';
+            
+            latest.forEach(item => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+                resultItem.innerHTML = `
+                    <span class="result-expect">期号: ${item.expect}</span>
+                    <span class="result-code">开奖: ${item.opencode}</span>
+                    <span>和值: ${item.sum}</span>
+                    <span class="result-display">${item.display}</span>
+                `;
+                container.appendChild(resultItem);
+            });
+        }
+
+        // 执行一次开奖
+        async function runOnce() {
+            try {
+                addLog('正在生成开奖数据...', 'info');
+                
+                const response = await fetch('http://localhost:8080/api/lottery/auto_kaijiang');
+                const result = await response.json();
+                
+                if (result.code === 200) {
+                    updateStats(result.data);
+                    updateLatestResults(result.data.latest);
+                    
+                    if (result.data.generated > 0) {
+                        addLog(`✅ 生成成功！新增 ${result.data.generated} 条，跳过 ${result.data.skipped} 条`, 'success');
+                        
+                        // 显示新生成的详细信息
+                        result.data.details.forEach(detail => {
+                            addLog(`   期号 ${detail.expect}: ${detail.opencode} (${detail.display})`, 'info');
+                        });
+                    } else {
+                        addLog(`ℹ️ 无新数据生成，跳过 ${result.data.skipped} 条已存在记录`, 'info');
+                    }
+                } else {
+                    addLog(`❌ 开奖失败: ${result.msg}`, 'error');
+                }
+            } catch (error) {
+                addLog(`❌ 请求失败: ${error.message}`, 'error');
+            }
+        }
+
+        // 启动自动开奖
+        function startAuto() {
+            if (autoTimer) return;
+            
+            addLog('🚀 启动自动开奖系统', 'success');
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
+            document.getElementById('statusDot').style.background = '#4caf50';
+            document.getElementById('statusText').textContent = '运行中 - 每10秒自动开奖';
+            
+            // 立即执行一次
+            runOnce();
+            
+            // 设置定时器，每10秒执行一次
+            autoTimer = setInterval(runOnce, 10000);
+        }
+
+        // 停止自动开奖
+        function stopAuto() {
+            if (!autoTimer) return;
+            
+            clearInterval(autoTimer);
+            autoTimer = null;
+            
+            addLog('⏸ 停止自动开奖系统', 'info');
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            document.getElementById('statusDot').style.background = '#999';
+            document.getElementById('statusText').textContent = '已停止';
+        }
+
+        // 页面加载时自动启动
+        window.addEventListener('load', () => {
+            addLog('📱 系统初始化完成', 'success');
+            // 自动启动
+            setTimeout(startAuto, 1000);
+        });
+
+        // 页面关闭时停止
+        window.addEventListener('beforeunload', () => {
+            if (autoTimer) {
+                stopAuto();
+            }
+        });
+    </script>
+</body>
+</html>
+

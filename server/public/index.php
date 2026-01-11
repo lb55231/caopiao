@@ -190,6 +190,10 @@ if (!isset($routes[$route])) {
     
     // 动态路由映射表
     $dynamicRoutes = [
+        // 彩票类型管理相关
+        '#^admin/lottery/type/update/(\d+)$#' => __DIR__ . '/api/admin/lottery_type_update.php',
+        '#^admin/lottery/type/delete/(\d+)$#' => __DIR__ . '/api/admin/lottery_type_delete.php',
+        '#^admin/lottery/result/delete/(\d+)$#' => __DIR__ . '/api/admin/lottery_result_delete.php',
         // 会员管理相关
         '#^admin/member/update/(\d+)$#' => __DIR__ . '/api/admin/member_update.php',
         '#^admin/member/delete/(\d+)$#' => __DIR__ . '/api/admin/member_delete.php',

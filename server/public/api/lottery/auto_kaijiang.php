@@ -74,8 +74,18 @@ try {
                 continue;
             }
             
-            // 根据彩票类型生成开奖号码
-            $opencode = generateOpenCode($typeid, $cpname);
+            // ✅ 先查询 yukaijiang 表，看是否有预设的开奖号码（与旧项目保持一致）
+            $ykjStmt = $pdo->prepare("SELECT opencode FROM {$prefix}yukaijiang WHERE name=:name AND expect=:expect AND hid=0");
+            $ykjStmt->execute([':name' => $cpname, ':expect' => $expect]);
+            $ykjData = $ykjStmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($ykjData && !empty($ykjData['opencode'])) {
+                // 使用预设的开奖号码
+                $opencode = $ykjData['opencode'];
+            } else {
+                // 没有预设，生成随机开奖号码
+                $opencode = generateOpenCode($typeid, $cpname);
+            }
             
             // 插入数据
             $insertStmt = $pdo->prepare("

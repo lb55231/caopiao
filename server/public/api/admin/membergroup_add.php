@@ -26,15 +26,21 @@ if (empty($input['groupname'])) {
     Database::error('请输入会员组名称');
 }
 
+// 兼容前端：如果传的是 fandian，转换为 fanshui
+if (isset($input['fandian']) && !isset($input['fanshui'])) {
+    $input['fanshui'] = $input['fandian'];
+    unset($input['fandian']);
+}
+
 try {
     $pdo = Database::getInstance();
     $prefix = Database::getPrefix();
     
     $stmt = $pdo->prepare("
         INSERT INTO {$prefix}membergroup 
-        (groupname, level, isagent, isdefautreg, groupstatus, listorder, jjje, lowest, highest, fandian, addtime)
+        (groupname, level, isagent, isdefautreg, groupstatus, listorder, jjje, lowest, highest, fanshui, addtime)
         VALUES 
-        (:groupname, :level, :isagent, :isdefautreg, :groupstatus, :listorder, :jjje, :lowest, :highest, :fandian, :addtime)
+        (:groupname, :level, :isagent, :isdefautreg, :groupstatus, :listorder, :jjje, :lowest, :highest, :fanshui, :addtime)
     ");
     
     $result = $stmt->execute([
@@ -47,7 +53,7 @@ try {
         ':jjje' => floatval($input['jjje'] ?? 0),
         ':lowest' => intval($input['lowest'] ?? 10),
         ':highest' => intval($input['highest'] ?? 50000),
-        ':fandian' => $input['fandian'] ?? '0',
+        ':fanshui' => $input['fanshui'] ?? '0',
         ':addtime' => time()
     ]);
     

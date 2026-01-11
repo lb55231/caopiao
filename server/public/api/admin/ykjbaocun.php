@@ -70,19 +70,24 @@ try {
     $checkStmt->execute([':name' => $name, ':expect' => $expect]);
     $existData = $checkStmt->fetch(PDO::FETCH_ASSOC);
     
+    // 将时间字符串转换为时间戳（与旧项目保持一致）
+    $opentimeTimestamp = strtotime($opentime);
+    if ($opentimeTimestamp === false) {
+        // 如果转换失败，尝试使用当前日期 + 时间
+        $opentimeTimestamp = strtotime(date('Y-m-d') . ' ' . $opentime);
+    }
+    
     if ($existData) {
-        // 更新
+        // 更新（旧项目只更新 opencode，不更新 opentime）
         $updateStmt = $pdo->prepare("
             UPDATE {$prefix}yukaijiang 
             SET opencode = :opencode,
-                opentime = :opentime,
                 stateadmin = :stateadmin
             WHERE name = :name AND expect = :expect AND hid = 0
         ");
         
         $result = $updateStmt->execute([
             ':opencode' => $opencode,
-            ':opentime' => $opentime,
             ':stateadmin' => $adminInfo['username'] ?? '',
             ':name' => $name,
             ':expect' => $expect
@@ -100,7 +105,7 @@ try {
             ':name' => $name,
             ':expect' => $expect,
             ':opencode' => $opencode,
-            ':opentime' => $opentime,
+            ':opentime' => $opentimeTimestamp,
             ':stateadmin' => $adminInfo['username'] ?? ''
         ]);
     }

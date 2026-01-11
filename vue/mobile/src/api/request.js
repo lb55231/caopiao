@@ -2,10 +2,11 @@ import axios from 'axios'
 import { showToast } from 'vant'
 import { useUserStore } from '@/stores/user'
 import router from '@/router'
+import env from '../../env'
 
 const request = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api',
-  timeout: 10000
+  baseURL: env.baseURL,
+  timeout: env.timeout
 })
 
 // 请求拦截器

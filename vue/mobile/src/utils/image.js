@@ -1,3 +1,5 @@
+import { getResourceUrl } from '../../env'
+
 /**
  * 图片URL处理工具
  */
@@ -8,19 +10,7 @@
  * @returns {string} 完整的图片URL
  */
 export function getImageUrl(path) {
-  if (!path) {
-    return ''
-  }
-  
-  // 如果已经是完整URL，直接返回
-  if (path.startsWith('http://') || path.startsWith('https://')) {
-    return path
-  }
-  
-  // 使用当前页面的协议和主机，替换端口为8000
-  const currentHost = window.location.hostname
-  const backendUrl = `http://${currentHost}:8000`
-  return backendUrl + path
+  return getResourceUrl(path)
 }
 
 /**

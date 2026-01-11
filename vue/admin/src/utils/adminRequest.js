@@ -1,11 +1,12 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import router from '@/router'
+import env from '../../env'
 
 // 管理后台专用的request实例
 const adminRequest = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api/admin',
-  timeout: 10000
+  baseURL: env.adminBaseURL,
+  timeout: env.timeout
 })
 
 // 请求拦截器

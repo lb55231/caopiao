@@ -16,10 +16,10 @@ class System extends BaseController
     {
         try {
             $config = [
-                'webtitle' => Setting::getSettingValue('webtitle', '彩票系统管理后台'),
-                'weblogo' => Setting::getSettingValue('weblogo', ''),
-                'serviceqq' => Setting::getSettingValue('serviceqq', ''),
-                'servicecode' => Setting::getSettingValue('servicecode', ''),
+                'webtitle' => Setting::getConfigValue('webtitle', '彩票系统管理后台'),
+                'weblogo' => Setting::getConfigValue('weblogo', ''),
+                'serviceqq' => Setting::getConfigValue('serviceqq', ''),
+                'servicecode' => Setting::getConfigValue('servicecode', ''),
             ];
             
             return $this->success('获取成功', $config);
@@ -35,13 +35,13 @@ class System extends BaseController
     {
         try {
             $settings = [
-                'webtitle' => Setting::getSettingValue('webtitle', ''),
-                'weblogo' => Setting::getSettingValue('weblogo', ''),
-                'serviceqq' => Setting::getSettingValue('serviceqq', ''),
-                'servicecode' => Setting::getSettingValue('servicecode', ''),
-                'registerbonus' => floatval(Setting::getSettingValue('registerbonus', 0)),
-                'needinvitecode' => intval(Setting::getSettingValue('needinvitecode', 0)),
-                'damaliang' => floatval(Setting::getSettingValue('damaliang', 100)),
+                'webtitle' => Setting::getConfigValue('webtitle', ''),
+                'weblogo' => Setting::getConfigValue('weblogo', ''),
+                'serviceqq' => Setting::getConfigValue('serviceqq', ''),
+                'servicecode' => Setting::getConfigValue('servicecode', ''),
+                'registerbonus' => floatval(Setting::getConfigValue('registerbonus', 0)),
+                'needinvitecode' => intval(Setting::getConfigValue('needinvitecode', 0)),
+                'damaliang' => floatval(Setting::getConfigValue('damaliang', 100)),
             ];
             
             return $this->success('获取成功', $settings);
@@ -63,7 +63,7 @@ class System extends BaseController
         try {
             foreach ($params as $key => $value) {
                 if ($value !== null) {
-                    Setting::setValue($key, $value);
+                    Setting::setConfigValue($key, $value);
                 }
             }
             

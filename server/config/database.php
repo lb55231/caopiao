@@ -27,7 +27,7 @@ return [
             // 数据库名
             'database'        => Env::get('database.database', 'xdmd'),
             // 用户名
-            'username'        => Env::get('database.username', 'xdmd'),
+            'username'        => Env::get('database.username', 'root'),
             // 密码
             'password'        => Env::get('database.password', 'xdmd'),
             // 端口

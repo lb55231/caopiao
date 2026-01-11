@@ -47,7 +47,25 @@ abstract class BaseController
     protected function initialize()
     {
         // 获取用户ID（由中间件注入）
-        $this->userId = $this->request->userId ?? 0;
+        // 注意：使用动态属性访问
+        $userId = $this->request->userId ?? null;
+        
+        // 如果没有获取到，尝试从 header 直接解析
+        if (!$userId) {
+            $token = $this->request->header('token', '') ?: $this->request->header('Token', '');
+            if ($token) {
+                try {
+                    require_once app()->getRootPath() . 'public/common/Jwt.php';
+                    $jwt = new \Jwt();
+                    $payload = $jwt->verifyToken($token);
+                    $userId = $payload['id'] ?? 0;
+                } catch (\Exception $e) {
+                    $userId = 0;
+                }
+            }
+        }
+        
+        $this->userId = $userId ?: 0;
     }
 
     /**
@@ -103,13 +121,28 @@ abstract class BaseController
     }
 
     /**
-     * 获取POST参数
+     * 获取POST参数（支持 JSON 和 表单）
      * @param array $fields 需要的字段
      * @return array
      */
     protected function getPostParams($fields = [])
     {
+        // 先尝试从 POST 获取
         $params = $this->request->post();
+        
+        // 如果 POST 为空，尝试解析 JSON
+        if (empty($params)) {
+            $json = file_get_contents('php://input');
+            $jsonData = json_decode($json, true);
+            if (is_array($jsonData)) {
+                $params = $jsonData;
+            }
+        }
+        
+        // 如果还是空，从 param 获取（兼容 GET 和其他方式）
+        if (empty($params)) {
+            $params = $this->request->param();
+        }
         
         if (!empty($fields)) {
             $result = [];

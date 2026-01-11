@@ -189,12 +189,7 @@ const handleTradeSubmit = async () => {
     showToast('请输入新密码')
     return
   }
-  
-  // 验证支付密码格式（6位数字）
-  if (!/^\d{6}$/.test(tradeForm.newPassword)) {
-    showToast('支付密码必须为6位数字')
-    return
-  }
+
   
   if (tradeForm.newPassword !== tradeForm.confirmPassword) {
     showToast('两次密码输入不一致')

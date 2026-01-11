@@ -107,7 +107,7 @@ class FinanceService
                     ]);
                     
                     // 增加洗码余额
-                    $damaliang = floatval(Setting::getSettingValue('damaliang', 100));
+                    $damaliang = floatval(Setting::getConfigValue('damaliang', 100));
                     if ($damaliang > 0) {
                         $ximaAmount = $recharge->amount * ($damaliang / 100);
                         $oldXima = $member->xima;

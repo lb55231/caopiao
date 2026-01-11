@@ -16,32 +16,34 @@ class Setting extends Model
     
     protected $schema = [
         'id'    => 'int',
-        'key'   => 'string',
+        'name'  => 'string',
         'value' => 'string',
     ];
     
     /**
      * 获取设置值
      */
-    public static function getValue($key, $default = '')
+    public static function getConfigValue($key, $default = '')
     {
-        $setting = self::where('key', $key)->find();
+        // 数据库字段是 name，不是 key
+        $setting = self::where('name', $key)->find();
         return $setting ? $setting->value : $default;
     }
     
     /**
-     * 设置值
+     * 设置配置值
      */
-    public static function setValue($key, $value)
+    public static function setConfigValue($key, $value)
     {
-        $setting = self::where('key', $key)->find();
+        // 数据库字段是 name，不是 key
+        $setting = self::where('name', $key)->find();
         
         if ($setting) {
             $setting->value = $value;
             $setting->save();
         } else {
             self::create([
-                'key' => $key,
+                'name' => $key,
                 'value' => $value
             ]);
         }

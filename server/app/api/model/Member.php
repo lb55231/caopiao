@@ -11,37 +11,11 @@ class Member extends Model
     // 设置表名
     protected $name = 'member';
     
-    // 设置字段信息
-    protected $schema = [
-        'id'            => 'int',
-        'username'      => 'string',
-        'password'      => 'string',
-        'tradepassword' => 'string',
-        'balance'       => 'float',
-        'xima'          => 'float',
-        'point'         => 'float',
-        'groupid'       => 'int',
-        'userbankname'  => 'string',
-        'tel'           => 'string',
-        'qq'            => 'string',
-        'email'         => 'string',
-        'islock'        => 'int',
-        'onlinetime'    => 'int',
-        'logintime'     => 'int',
-        'loginip'       => 'string',
-        'regip'         => 'string',
-        'regtime'       => 'int',
-        'proxy'         => 'int',
-        'fandian'       => 'float',
-        'parentid'      => 'int',
-        'invite_code'   => 'string',
-        'isnb'          => 'int',
-        'xinyu'         => 'int',
-        'zijin_num'     => 'int',
-        'status_order'  => 'int',
-        'status_withdraw' => 'int',
-        'withdraw_deny_message' => 'string',
-    ];
+    // 不限制字段，让数据库自动处理
+    protected $schema = [];
+    
+    // 关闭严格字段检查
+    protected $strict = false;
     
     // 隐藏字段
     protected $hidden = ['password', 'tradepassword'];

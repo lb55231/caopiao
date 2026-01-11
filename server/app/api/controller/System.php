@@ -15,11 +15,24 @@ class System extends BaseController
     public function config()
     {
         try {
+            $db = \think\facade\Db::connect();
+            $prefix = config('database.connections.mysql.prefix');
+            
+            // 获取公开的配置项
+            $settings = $db->table($prefix . 'setting')
+                ->whereIn('name', ['webtitle', 'weblogo', 'keywords', 'description', 'copyright', 'icp', 'serviceqq', 'servicecode'])
+                ->column('value', 'name');
+            
+            // 默认配置
             $config = [
-                'webtitle' => Setting::getValue('webtitle', '彩票系统'),
-                'weblogo' => Setting::getValue('weblogo', ''),
-                'serviceqq' => Setting::getValue('serviceqq', ''),
-                'servicecode' => Setting::getValue('servicecode', ''),
+                'webtitle' => $settings['webtitle'] ?? '彩票系统',
+                'weblogo' => $settings['weblogo'] ?? '',
+                'keywords' => $settings['keywords'] ?? '',
+                'description' => $settings['description'] ?? '',
+                'copyright' => $settings['copyright'] ?? '',
+                'icp' => $settings['icp'] ?? '',
+                'serviceqq' => $settings['serviceqq'] ?? '',
+                'servicecode' => $settings['servicecode'] ?? ''
             ];
             
             return $this->success('获取成功', $config);

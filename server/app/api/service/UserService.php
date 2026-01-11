@@ -17,45 +17,55 @@ class UserService
      */
     public function login($username, $password)
     {
+        $db = Db::connect();
+        $prefix = config('database.connections.mysql.prefix');
+        
         // 查询用户
-        $user = Member::where('username', $username)->find();
+        $user = $db->table($prefix . 'member')
+            ->where('username', $username)
+            ->find();
         
         if (!$user) {
             throw new \Exception('用户不存在');
         }
         
-        // 验证密码
-        if (!$user->checkPassword($password)) {
+        // 验证密码 (MD5)
+        if (md5($password) !== $user['password']) {
             throw new \Exception('密码错误');
         }
         
         // 检查锁定状态
-        if ($user->islock == 1) {
+        if (isset($user['islock']) && $user['islock'] == 1) {
             throw new \Exception('账号已被锁定');
         }
         
-        // 生成token
-        $token = JwtService::create($user->id, [
-            'username' => $user->username
+        // 生成token (使用Jwt类)
+        require_once app()->getRootPath() . 'public/common/Jwt.php';
+        $jwt = new \Jwt();
+        $token = $jwt->createToken([
+            'id' => $user['id'],
+            'username' => $user['username']
         ]);
         
         // 更新登录信息
-        $user->logintime = time();
-        $user->loginip = request()->ip();
-        $user->onlinetime = time(); // 设置在线时间
-        $user->save();
+        $db->table($prefix . 'member')
+            ->where('id', $user['id'])
+            ->update([
+                'logintime' => time(),
+                'loginip' => request()->ip()
+            ]);
         
         return [
             'token' => $token,
             'userInfo' => [
-                'id' => $user->id,
-                'username' => $user->username,
-                'balance' => $user->balance,
-                'xima' => $user->xima,
-                'userbankname' => $user->userbankname,
-                'tel' => $user->tel,
-                'qq' => $user->qq,
-                'email' => $user->email
+                'id' => $user['id'],
+                'username' => $user['username'],
+                'balance' => $user['balance'] ?? 0,
+                'xima' => $user['xima'] ?? 0,
+                'userbankname' => $user['userbankname'] ?? '',
+                'tel' => $user['tel'] ?? '',
+                'qq' => $user['qq'] ?? '',
+                'email' => $user['email'] ?? ''
             ]
         ];
     }
@@ -63,7 +73,7 @@ class UserService
     /**
      * 用户注册
      */
-    public function register($username, $password, $inviteCode = '')
+    public function register($username, $password, $inviteCode = '', $tradepassword = '123456')
     {
         // 检查用户名是否存在
         $exist = Member::where('username', $username)->find();
@@ -71,31 +81,40 @@ class UserService
             throw new \Exception('用户名已存在');
         }
         
-        // 检查是否需要邀请码
-        $needInviteCode = Setting::getValue('needinvitecode', 0);
-        if ($needInviteCode == 1) {
-            if (empty($inviteCode)) {
-                throw new \Exception('请输入邀请码');
+        // reccode 可以是推荐人ID或邀请码
+        $parentid = 0;
+        if (!empty($inviteCode)) {
+            // 先按邀请码查找，如果找不到再按ID查找
+            $inviter = Member::where('invite_code', $inviteCode)->find();
+            
+            // 如果按邀请码找不到，且输入的是数字，则按用户ID查找
+            if (!$inviter && is_numeric($inviteCode)) {
+                $inviter = Member::where('id', $inviteCode)->find();
             }
             
-            // 验证邀请码
-            $inviter = Member::where('invite_code', $inviteCode)->find();
             if (!$inviter) {
-                throw new \Exception('邀请码不正确');
+                throw new \Exception('推荐码验证失败');
             }
+            
+            // 检查是否是代理
+            if ($inviter->proxy != 1) {
+                throw new \Exception('推荐码无效');
+            }
+            
             $parentid = $inviter->id;
-        } else {
-            $parentid = 0;
         }
         
         // 开启事务
         Db::startTrans();
         try {
-            // 创建用户
-            $user = Member::create([
+            // 使用原始SQL插入，确保所有字段都有值
+            $db = Db::connect();
+            $prefix = config('database.connections.mysql.prefix');
+            
+            $userId = $db->table($prefix . 'member')->insertGetId([
                 'username' => $username,
                 'password' => md5($password),
-                'tradepassword' => md5('123456'), // 默认支付密码
+                'tradepassword' => md5($tradepassword), // 支付密码
                 'balance' => 0,
                 'xima' => 0,
                 'point' => 0,
@@ -109,10 +128,34 @@ class UserService
                 'parentid' => $parentid,
                 'proxy' => 0,
                 'fandian' => 0,
+                'isnb' => 0, // 0=正常会员, 1=内部会员
+                'nickname' => '',
+                'email' => '',
+                'phone' => '',
+                'userbankname' => '',
+                'sex' => 1,
+                'tel' => '',
+                'qq' => '',
+                'source' => 'mobile',
+                'loginsource' => 'mobile',
+                'updatetime' => time(),
+                'zijin_num' => '0',
+                'mlogin_num' => '0',
+                'mzijin_num' => '0',
+                'xinyu' => 100,
+                'status_order' => 1,
+                'status_withdraw' => 1,
+                'withdraw_deny_message' => '',
+                'invite_code' => '',
+                'iparea' => '',
+                'jinjijilu' => 1,
             ]);
             
+            // 获取用户对象
+            $user = Member::find($userId);
+            
             // 注册送金额
-            $registerBonus = floatval(Setting::getValue('registerbonus', 0));
+            $registerBonus = floatval(Setting::getConfigValue('registerbonus', 0));
             if ($registerBonus > 0) {
                 // 增加余额
                 $user->balance = $registerBonus;
@@ -198,11 +241,44 @@ class UserService
             'balance' => $user->balance,
             'xima' => $user->xima,
             'point' => $user->point,
+            'realname' => $user->userbankname ?? '',  // 前端用 realname
             'userbankname' => $user->userbankname ?? '',
+            'phone' => $user->phone ?? '',
             'tel' => $user->tel ?? '',
             'qq' => $user->qq ?? '',
             'email' => $user->email ?? '',
+            'groupid' => $user->groupid ?? 1,
             'wechat' => '' // 数据库没有这个字段
+        ];
+    }
+    
+    /**
+     * 获取用户资料
+     */
+    public function getProfile($userId)
+    {
+        $db = Db::connect();
+        $prefix = config('database.connections.mysql.prefix');
+        
+        $user = $db->table($prefix . 'member')->where('id', $userId)->find();
+        
+        if (!$user) {
+            throw new \Exception('用户不存在');
+        }
+        
+        return [
+            'id' => $user['id'],
+            'username' => $user['username'],
+            'balance' => $user['balance'],
+            'xima' => $user['xima'],
+            'point' => $user['point'],
+            'realname' => $user['userbankname'] ?? '',  // 前端用 realname，数据库用 userbankname
+            'userbankname' => $user['userbankname'] ?? '',
+            'phone' => $user['phone'] ?? '',
+            'tel' => $user['tel'] ?? '',
+            'qq' => $user['qq'] ?? '',
+            'email' => $user['email'] ?? '',
+            'groupid' => $user['groupid'] ?? 1,
         ];
     }
     
@@ -211,28 +287,37 @@ class UserService
      */
     public function updateProfile($userId, $data)
     {
-        $user = Member::find($userId);
+        // 使用原生SQL更新，确保数据保存
+        $db = Db::connect();
+        $prefix = config('database.connections.mysql.prefix');
         
-        if (!$user) {
-            throw new \Exception('用户不存在');
-        }
+        $updateData = [];
         
         // 映射字段
         if (isset($data['realname'])) {
-            $user->userbankname = $data['realname'];
+            $updateData['userbankname'] = $data['realname'];
+        }
+        if (isset($data['phone'])) {
+            $updateData['phone'] = $data['phone'];
         }
         if (isset($data['tel'])) {
-            $user->tel = $data['tel'];
+            $updateData['tel'] = $data['tel'];
         }
         if (isset($data['qq'])) {
-            $user->qq = $data['qq'];
+            $updateData['qq'] = $data['qq'];
         }
         if (isset($data['email'])) {
-            $user->email = $data['email'];
+            $updateData['email'] = $data['email'];
         }
-        // wechat字段不存在，忽略
         
-        $user->save();
+        if (empty($updateData)) {
+            return true;
+        }
+        
+        // 更新数据库
+        $result = $db->table($prefix . 'member')
+            ->where('id', $userId)
+            ->update($updateData);
         
         return true;
     }

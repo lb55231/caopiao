@@ -8,4 +8,6 @@
 /kaijiang.com
 /daili
 /server/runtime/api/log
+/vue/agent/node_modules
+/vue/agent/dist
 xdmd.sql

@@ -130,3 +130,21 @@ Route::rule('admin/bet/update-code', '\app\api\controller\admin\BetCheckControll
 
 // ==================== 通用上传接口 ====================
 Route::rule('upload/image', '\app\api\controller\UploadController@image', 'POST');
+
+// ==================== 代理端路由 ====================
+// 代理登录（不需要认证）
+Route::rule('agent/login', '\app\api\controller\agent\AuthController@login', 'POST');
+
+// 代理账户管理
+Route::rule('agent/account/info', '\app\api\controller\agent\AccountController@info', 'GET');
+
+// 代理财务管理
+Route::rule('agent/finance/account-change', '\app\api\controller\agent\FinanceController@accountChange', 'GET');
+Route::rule('agent/finance/recharge', '\app\api\controller\agent\FinanceController@rechargeList', 'GET');
+Route::rule('agent/finance/withdraw', '\app\api\controller\agent\FinanceController@withdrawList', 'GET');
+Route::rule('agent/finance/profit', '\app\api\controller\agent\FinanceController@profitReport', 'GET');
+
+// 代理彩票管理
+Route::rule('agent/lottery/types', '\app\api\controller\agent\LotteryController@types', 'GET');
+Route::rule('agent/lottery/results', '\app\api\controller\agent\LotteryController@results', 'GET');
+Route::rule('agent/lottery/bet-records', '\app\api\controller\agent\LotteryController@betRecords', 'GET');

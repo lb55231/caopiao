@@ -4,6 +4,9 @@ namespace think;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+// 增加内存限制，避免内存溢出
+ini_set('memory_limit', '512M');
+
 // 设置时区
 date_default_timezone_set('Asia/Shanghai');
 

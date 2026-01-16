@@ -99,6 +99,12 @@ const routes = [
             meta: { title: '玩法管理', icon: 'Operation' }
           },
           {
+            path: 'activities',
+            name: 'Activities',
+            component: () => import('@/views/system/Activities.vue'),
+            meta: { title: '活动管理', icon: 'Present' }
+          },
+          {
             path: 'lottery',
             name: 'Lottery',
             component: () => import('@/views/system/Lottery.vue'),

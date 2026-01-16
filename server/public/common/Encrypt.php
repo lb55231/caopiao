@@ -97,4 +97,3 @@ class Encrypt {
         return $encrypted === $storedPassword;
     }
 }
-

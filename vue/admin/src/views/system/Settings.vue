@@ -209,6 +209,11 @@ const loadSettings = async () => {
         data.registerbonus = parseFloat(data.registerbonus) || 0
       }
       
+      // 充值打码量（数字类型）
+      if (data.damaliang !== undefined) {
+        data.damaliang = parseFloat(data.damaliang) || 0
+      }
+      
       // 开关类型字段（字符串转数字）
       if (data.needinvitecode !== undefined) {
         data.needinvitecode = parseInt(data.needinvitecode) || 0

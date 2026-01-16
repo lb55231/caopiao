@@ -29,10 +29,10 @@ class UploadController extends BaseController
         }
         
         try {
-            // 验证文件大小（2MB）
-            $maxSize = 2 * 1024 * 1024;
+            // 验证文件大小（5MB）
+            $maxSize = 5 * 1024 * 1024;
             if ($file->getSize() > $maxSize) {
-                return $this->error('文件大小不能超过2MB');
+                return $this->error('文件大小不能超过5MB');
             }
             
             // 验证文件类型
@@ -49,26 +49,24 @@ class UploadController extends BaseController
                 $extension = 'jpg';
             }
             
-            // 创建上传目录
-            $uploadDir = app()->getRootPath() . 'public/uploads/lottery/';
+            // 创建上传目录（按日期分目录）
+            $uploadDir = app()->getRootPath() . 'public/uploads/images/' . date('Ymd') . '/';
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
             
             // 生成唯一文件名
             $fileName = date('YmdHis') . '_' . uniqid() . '.' . $extension;
-            $filePath = $uploadDir . $fileName;
             
             // 移动文件
             $file->move($uploadDir, $fileName);
             
             // 返回相对路径URL
-            $fileUrl = '/uploads/lottery/' . $fileName;
+            $fileUrl = '/uploads/images/' . date('Ymd') . '/' . $fileName;
             
             return $this->success('上传成功', [
-                'path' => $fileUrl,
                 'url' => $fileUrl,
-                'filename' => $fileName,
+                'name' => basename($file->getOriginalName()),
                 'size' => $file->getSize()
             ]);
             

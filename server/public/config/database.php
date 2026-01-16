@@ -15,4 +15,3 @@ return [
     'prefix'    => 'caipiao_',
     'debug'     => true
 ];
-

@@ -1,10 +1,14 @@
 <IfModule mod_rewrite.c>
-    RewriteEngine On
-    
-    # 如果请求的是真实存在的文件或目录，直接访问
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    
-    # 将所有请求重写到 index.php
-    RewriteRule ^api/(.*)$ index.php?route=$1 [QSA,L]
+  Options +FollowSymlinks -Multiviews
+  RewriteEngine On
+
+  # 静态资源直接访问，不走框架路由
+  RewriteCond %{REQUEST_URI} ^/uploads/ [NC,OR]
+  RewriteCond %{REQUEST_URI} \.(jpg|jpeg|png|gif|webp|css|js|ico|svg|woff|woff2|ttf|eot)$ [NC]
+  RewriteRule ^(.*)$ - [L]
+
+  # 其他请求如果不是真实文件或目录，则转发到 index.php
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]
 </IfModule>

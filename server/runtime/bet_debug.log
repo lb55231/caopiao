@@ -58,3 +58,8 @@ Token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYW9waWFvIiwiaWF0IjoxNzY4
 userId from request: null
 userId from controller: 3306
 
+2026-01-16 16:24:04
+Token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYW9waWFvIiwiaWF0IjoxNzY4NTQ5NjYyLCJleHAiOjE3NjkxNTQ0NjIsImRhdGEiOnsiaWQiOjMzMDYsInVzZXJuYW1lIjoiOTgxMTkifX0=.3d91fdf024826df5dc36b4819bf2f2ce255d5aea4f75b8323c4c0f1dc0c79cf3
+userId from request: null
+userId from controller: 3306
+

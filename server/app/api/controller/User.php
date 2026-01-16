@@ -535,8 +535,9 @@ class User extends BaseController
         }
         
         $page = $this->request->param('page', 1);
-        $pageSize = $this->request->param('pageSize', 20);
+        $pageSize = $this->request->param('pageSize', $this->request->param('limit', 20)); // 兼容 pageSize 和 limit 参数
         $atime = $this->request->param('atime', 1);
+        $status = $this->request->param('status', ''); // 状态筛选：-1=待开奖, 0=未中奖, 1=已中奖
         
         try {
             $db = \think\facade\Db::connect();
@@ -561,6 +562,11 @@ class User extends BaseController
                     break;
             }
             
+            // 状态筛选
+            if ($status !== '') {
+                $where[] = ['isdraw', '=', intval($status)];
+            }
+            
             $list = $db->table($prefix . 'touzhu')
                 ->where($where)
                 ->order('id', 'desc')
@@ -571,14 +577,14 @@ class User extends BaseController
             // 添加状态文本
             foreach ($list as &$item) {
                 switch ($item['isdraw']) {
-                    case 0:
+                    case -1:
                         $item['status_text'] = '待匹配';
                         break;
-                    case 1:
-                        $item['status_text'] = '已匹配订单';
+                    case 0:
+                        $item['status_text'] = '未匹配';
                         break;
-                    case -1:
-                        $item['status_text'] = '未匹配订单';
+                    case 1:
+                        $item['status_text'] = '已匹配';
                         break;
                     case -2:
                         $item['status_text'] = '已取消';

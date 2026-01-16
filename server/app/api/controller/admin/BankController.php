@@ -127,13 +127,16 @@ class BankController extends AdminBaseController
      * @param int $id
      * @return \think\Response
      */
-    public function updatePayset($id)
+    public function updatePayset($id = null)
     {
         if (!$this->request->isPut()) {
             return $this->error('请使用PUT请求', null, 405);
         }
 
         $input = $this->getPostParams();
+        
+        // 支持多种方式获取ID：路径参数、查询参数、请求体
+        $id = $id ?: ($this->request->param('id') ?: ($input['id'] ?? null));
 
         if (empty($input['paytype']) || empty($input['paytypetitle'])) {
             return $this->error('请填写完整信息');
@@ -189,10 +192,17 @@ class BankController extends AdminBaseController
      * @param int $id
      * @return \think\Response
      */
-    public function deletePayset($id)
+    public function deletePayset($id = null)
     {
         if (!$this->request->isDelete()) {
             return $this->error('请使用DELETE请求', null, 405);
+        }
+
+        // 支持多种方式获取ID：路径参数、查询参数
+        $id = $id ?: $this->request->param('id');
+        
+        if (empty($id)) {
+            return $this->error('缺少ID参数');
         }
 
         try {
@@ -221,17 +231,25 @@ class BankController extends AdminBaseController
      * @param int $id
      * @return \think\Response
      */
-    public function togglePaysetStatus($id)
+    public function togglePaysetStatus($id = null)
     {
-        if (!$this->request->isPut()) {
-            return $this->error('请使用PUT请求', null, 405);
+        if (!$this->request->isPut() && !$this->request->isPost()) {
+            return $this->error('请使用PUT或POST请求', null, 405);
+        }
+
+        $input = $this->getPostParams();
+        
+        // 支持多种方式获取ID：路径参数、查询参数、请求体
+        $id = $id ?: ($this->request->param('id') ?: ($input['id'] ?? null));
+        
+        if (empty($id)) {
+            return $this->error('缺少ID参数');
         }
 
         try {
             $pdo = $this->getDb();
             $prefix = $this->getPrefix();
 
-            $input = $this->getPostParams();
             $status = isset($input['status']) ? intval($input['status']) : null;
 
             if ($status === null) {
@@ -322,13 +340,20 @@ class BankController extends AdminBaseController
      * @param int $id
      * @return \think\Response
      */
-    public function updateSysbank($id)
+    public function updateSysbank($id = null)
     {
         if (!$this->request->isPut()) {
             return $this->error('请使用PUT请求', null, 405);
         }
 
         $input = $this->getPostParams();
+        
+        // 支持多种方式获取ID：路径参数、查询参数、请求体
+        $id = $id ?: ($this->request->param('id') ?: ($input['id'] ?? null));
+        
+        if (empty($id)) {
+            return $this->error('缺少ID参数');
+        }
 
         try {
             $pdo = $this->getDb();
@@ -389,10 +414,17 @@ class BankController extends AdminBaseController
      * @param int $id
      * @return \think\Response
      */
-    public function deleteSysbank($id)
+    public function deleteSysbank($id = null)
     {
         if (!$this->request->isDelete()) {
             return $this->error('请使用DELETE请求', null, 405);
+        }
+
+        // 支持多种方式获取ID：路径参数、查询参数
+        $id = $id ?: $this->request->param('id');
+        
+        if (empty($id)) {
+            return $this->error('缺少ID参数');
         }
 
         try {
@@ -421,10 +453,19 @@ class BankController extends AdminBaseController
      * @param int $id
      * @return \think\Response
      */
-    public function toggleSysbankStatus($id)
+    public function toggleSysbankStatus($id = null)
     {
-        if (!$this->request->isPut()) {
-            return $this->error('请使用PUT请求', null, 405);
+        if (!$this->request->isPut() && !$this->request->isPost()) {
+            return $this->error('请使用PUT或POST请求', null, 405);
+        }
+
+        $input = $this->getPostParams();
+        
+        // 支持多种方式获取ID：路径参数、查询参数、请求体
+        $id = $id ?: ($this->request->param('id') ?: ($input['id'] ?? null));
+        
+        if (empty($id)) {
+            return $this->error('缺少ID参数');
         }
 
         try {
@@ -513,13 +554,20 @@ class BankController extends AdminBaseController
      * @param int $id
      * @return \think\Response
      */
-    public function updateLinebank($id)
+    public function updateLinebank($id = null)
     {
         if (!$this->request->isPut()) {
             return $this->error('请使用PUT请求', null, 405);
         }
 
         $input = $this->getPostParams();
+        
+        // 支持多种方式获取ID：路径参数、查询参数、请求体
+        $id = $id ?: ($this->request->param('id') ?: ($input['id'] ?? null));
+        
+        if (empty($id)) {
+            return $this->error('缺少ID参数');
+        }
 
         try {
             $pdo = $this->getDb();
@@ -580,10 +628,17 @@ class BankController extends AdminBaseController
      * @param int $id
      * @return \think\Response
      */
-    public function deleteLinebank($id)
+    public function deleteLinebank($id = null)
     {
         if (!$this->request->isDelete()) {
             return $this->error('请使用DELETE请求', null, 405);
+        }
+
+        // 支持多种方式获取ID：路径参数、查询参数
+        $id = $id ?: $this->request->param('id');
+        
+        if (empty($id)) {
+            return $this->error('缺少ID参数');
         }
 
         try {
@@ -612,10 +667,19 @@ class BankController extends AdminBaseController
      * @param int $id
      * @return \think\Response
      */
-    public function toggleLinebankStatus($id)
+    public function toggleLinebankStatus($id = null)
     {
-        if (!$this->request->isPut()) {
-            return $this->error('请使用PUT请求', null, 405);
+        if (!$this->request->isPut() && !$this->request->isPost()) {
+            return $this->error('请使用PUT或POST请求', null, 405);
+        }
+
+        $input = $this->getPostParams();
+        
+        // 支持多种方式获取ID：路径参数、查询参数、请求体
+        $id = $id ?: ($this->request->param('id') ?: ($input['id'] ?? null));
+        
+        if (empty($id)) {
+            return $this->error('缺少ID参数');
         }
 
         try {

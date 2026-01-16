@@ -127,6 +127,18 @@ const routes = [
             name: 'BetCheck',
             component: () => import('@/views/system/BetCheck.vue'),
             meta: { title: '注单异常检查', icon: 'Warning' }
+          },
+          {
+            path: 'admins',
+            name: 'Admins',
+            component: () => import('@/views/system/Admins.vue'),
+            meta: { title: '管理员管理', icon: 'UserFilled' }
+          },
+          {
+            path: 'change-password',
+            name: 'ChangePassword',
+            component: () => import('@/views/system/ChangePassword.vue'),
+            meta: { title: '修改密码', icon: 'Lock' }
           }
         ]
       },

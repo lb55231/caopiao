@@ -363,12 +363,15 @@ class FinanceController extends AdminBaseController
      * @param int $id
      * @return \think\Response
      */
-    public function rechargeDelete($id)
+    public function rechargeDelete($id = null)
     {
         if (!$this->request->isDelete()) {
             return $this->error('请使用DELETE请求', null, 405);
         }
 
+        // 支持多种方式获取ID：路径参数、查询参数
+        $id = $id ?: $this->request->param('id');
+        
         if (empty($id)) {
             return $this->error('缺少ID参数');
         }
@@ -609,12 +612,15 @@ class FinanceController extends AdminBaseController
      * @param int $id
      * @return \think\Response
      */
-    public function withdrawDelete($id)
+    public function withdrawDelete($id = null)
     {
         if (!$this->request->isDelete()) {
             return $this->error('请使用DELETE请求', null, 405);
         }
 
+        // 支持多种方式获取ID：路径参数、查询参数
+        $id = $id ?: $this->request->param('id');
+        
         if (empty($id)) {
             return $this->error('缺少ID参数');
         }

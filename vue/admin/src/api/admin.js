@@ -1,143 +1,79 @@
 import adminRequest from '@/utils/adminRequest'
+import request from '@/utils/request'
+import env from '../../env'
 
 /**
  * 管理员登录
  */
 export function login(data) {
-  return adminRequest({
-    url: '/login',
-    method: 'post',
-    data
-  })
+  return request.post(env.baseURL + '/admin/login', data)
 }
 
 /**
- * 获取管理员信息
+ * 获取当前管理员信息
  */
 export function getAdminInfo() {
-  return adminRequest({
-    url: '/info',
-    method: 'get'
+  // 返回当前存储的管理员信息
+  const adminInfo = JSON.parse(localStorage.getItem('admin_info') || '{}')
+  return Promise.resolve({
+    code: 200,
+    msg: '获取成功',
+    data: adminInfo
   })
 }
 
 /**
- * 获取统计数据
+ * 获取管理员列表
  */
-export function getStatistics(params) {
-  return adminRequest({
-    url: '/statistics',
-    method: 'get',
-    params
-  })
+export function getAdminList(params) {
+  return adminRequest.get('/admin/list', { params })
 }
 
 /**
- * 获取会员列表
+ * 添加管理员
  */
-export function getMemberList(params) {
-  return adminRequest({
-    url: '/member/list',
-    method: 'get',
-    params
-  })
+export function addAdmin(data) {
+  return adminRequest.post('/admin/add', data)
 }
 
 /**
- * 获取会员详情
+ * 更新管理员
  */
-export function getMemberDetail(id) {
-  return adminRequest({
-    url: `/member/${id}`,
-    method: 'get'
-  })
+export function updateAdmin(data) {
+  return adminRequest.put('/admin/update', data)
 }
 
 /**
- * 调整会员余额
+ * 删除管理员
  */
-export function adjustBalance(data) {
-  return adminRequest({
-    url: '/member/change_balance/' + data.id,
-    method: 'post',
-    data
-  })
+export function deleteAdmin(id) {
+  return adminRequest.delete(`/admin/delete?id=${id}`)
 }
 
 /**
- * 获取投注记录
+ * 锁定/解锁管理员
  */
-export function getBetList(params) {
-  return adminRequest({
-    url: '/bets',
-    method: 'get',
-    params
-  })
+export function toggleAdminLock(data) {
+  return adminRequest.post('/admin/toggle-lock', data)
 }
 
 /**
- * 获取开奖记录
+ * 获取管理组列表
  */
-export function getLotteryList(params) {
-  return adminRequest({
-    url: '/lottery/results',
-    method: 'get',
-    params
-  })
+export function getAdminGroups() {
+  return adminRequest.get('/admin/groups')
 }
 
 /**
- * 添加开奖记录
+ * 修改密码
  */
-export function addLottery(data) {
-  return adminRequest({
-    url: '/lottery/result/add',
-    method: 'post',
-    data
-  })
+export function changePassword(data) {
+  return adminRequest.post('/change-password', data)
 }
 
 /**
- * 获取充值记录
+ * 修改安全码
  */
-export function getRechargeList(params) {
-  return adminRequest({
-    url: '/recharge/list',
-    method: 'get',
-    params
-  })
+export function changeSafecode(data) {
+  return adminRequest.post('/change-safecode', data)
 }
-
-/**
- * 获取提现记录
- */
-export function getWithdrawList(params) {
-  return adminRequest({
-    url: '/withdraw/list',
-    method: 'get',
-    params
-  })
-}
-
-/**
- * 审核提现
- */
-export function auditWithdraw(data) {
-  return adminRequest({
-    url: '/withdraw/audit/' + data.id,
-    method: 'post',
-    data
-  })
-}
-
-/**
- * 获取账变记录
- */
-export function getFinanceRecords(params) {
-  return adminRequest({
-    url: '/finance/records',
-    method: 'get',
-    params
-  })
-}
-

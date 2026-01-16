@@ -8,6 +8,19 @@ use think\facade\Route;
 // ==================== 后台管理路由 ====================
 Route::rule('admin/login', '\app\api\controller\admin\AuthController@login', 'POST');
 
+// 管理员管理
+Route::rule('admin/admin/list', '\app\api\controller\admin\AdminController@list', 'GET');
+Route::rule('admin/admin/add', '\app\api\controller\admin\AdminController@add', 'POST');
+Route::rule('admin/admin/update/:id', '\app\api\controller\admin\AdminController@update', 'PUT|POST');
+Route::rule('admin/admin/update', '\app\api\controller\admin\AdminController@update', 'PUT|POST');
+Route::rule('admin/admin/delete/:id', '\app\api\controller\admin\AdminController@delete', 'DELETE');
+Route::rule('admin/admin/delete', '\app\api\controller\admin\AdminController@delete', 'DELETE');
+Route::rule('admin/admin/toggle_lock/:id', '\app\api\controller\admin\AdminController@toggleLock', 'POST|PUT');
+Route::rule('admin/admin/toggle-lock', '\app\api\controller\admin\AdminController@toggleLock', 'POST|PUT');
+Route::rule('admin/admin/groups', '\app\api\controller\admin\AdminController@groups', 'GET');
+Route::rule('admin/change-password', '\app\api\controller\admin\AdminController@changePassword', 'POST');
+Route::rule('admin/change-safecode', '\app\api\controller\admin\AdminController@changeSafecode', 'POST');
+
 Route::rule('admin/member/list', '\app\api\controller\admin\MemberController@list', 'GET');
 Route::rule('admin/member/update/:id', '\app\api\controller\admin\MemberController@update', 'PUT');
 Route::rule('admin/member/toggle_lock/:id', '\app\api\controller\admin\MemberController@toggleLock', 'PUT');
@@ -34,12 +47,20 @@ Route::rule('admin/agent/link/delete/:id', '\app\api\controller\admin\AgentContr
 Route::rule('admin/loginlog/list', '\app\api\controller\admin\AgentController@loginLogs', 'GET');
 
 Route::rule('admin/fund/records', '\app\api\controller\admin\FinanceController@fundRecords', 'GET');
+
+// 充值记录
 Route::rule('admin/recharge/list', '\app\api\controller\admin\FinanceController@rechargeList', 'GET');
+Route::rule('admin/recharge/audit/:id', '\app\api\controller\admin\FinanceController@rechargeAudit', 'POST');
 Route::rule('admin/recharge/audit', '\app\api\controller\admin\FinanceController@rechargeAudit', 'POST');
 Route::rule('admin/recharge/delete/:id', '\app\api\controller\admin\FinanceController@rechargeDelete', 'DELETE');
+Route::rule('admin/recharge/delete', '\app\api\controller\admin\FinanceController@rechargeDelete', 'DELETE');
+
+// 提现记录
 Route::rule('admin/withdraw/list', '\app\api\controller\admin\FinanceController@withdrawList', 'GET');
+Route::rule('admin/withdraw/audit/:id', '\app\api\controller\admin\FinanceController@withdrawAudit', 'POST');
 Route::rule('admin/withdraw/audit', '\app\api\controller\admin\FinanceController@withdrawAudit', 'POST');
 Route::rule('admin/withdraw/delete/:id', '\app\api\controller\admin\FinanceController@withdrawDelete', 'DELETE');
+Route::rule('admin/withdraw/delete', '\app\api\controller\admin\FinanceController@withdrawDelete', 'DELETE');
 
 Route::rule('admin/lottery/types', '\app\api\controller\admin\LotteryController@types', 'GET');
 Route::rule('admin/lottery/results', '\app\api\controller\admin\LotteryController@results', 'GET');
@@ -56,25 +77,34 @@ Route::rule('admin/bet/records', '\app\api\controller\admin\LotteryController@be
 Route::rule('admin/yukaijiang', '\app\api\controller\admin\LotteryController@yukaijiang', 'GET');
 Route::rule('admin/ykjbaocun', '\app\api\controller\admin\LotteryController@ykjbaocun', 'POST');
 
+// 存款方式配置（payset表）
 Route::rule('admin/payset/list', '\app\api\controller\admin\BankController@paysetList', 'GET');
 Route::rule('admin/payset/add', '\app\api\controller\admin\BankController@addPayset', 'POST');
 Route::rule('admin/payset/update/:id', '\app\api\controller\admin\BankController@updatePayset', 'PUT');
+Route::rule('admin/payset/update', '\app\api\controller\admin\BankController@updatePayset', 'PUT');
 Route::rule('admin/payset/delete/:id', '\app\api\controller\admin\BankController@deletePayset', 'DELETE');
+Route::rule('admin/payset/delete', '\app\api\controller\admin\BankController@deletePayset', 'DELETE');
 Route::rule('admin/payset/toggle_status/:id', '\app\api\controller\admin\BankController@togglePaysetStatus', 'PUT');
 Route::rule('admin/payset/toggle-status', '\app\api\controller\admin\BankController@togglePaysetStatus', 'POST');
 Route::rule('admin/payset/listorder', '\app\api\controller\admin\BankController@savePaysetOrder', 'POST');
 
+// 提款银行（sysbank表）
 Route::rule('admin/sysbank/list', '\app\api\controller\admin\BankController@sysbankList', 'GET');
 Route::rule('admin/sysbank/add', '\app\api\controller\admin\BankController@addSysbank', 'POST');
 Route::rule('admin/sysbank/update/:id', '\app\api\controller\admin\BankController@updateSysbank', 'PUT');
+Route::rule('admin/sysbank/update', '\app\api\controller\admin\BankController@updateSysbank', 'PUT');
 Route::rule('admin/sysbank/delete/:id', '\app\api\controller\admin\BankController@deleteSysbank', 'DELETE');
+Route::rule('admin/sysbank/delete', '\app\api\controller\admin\BankController@deleteSysbank', 'DELETE');
 Route::rule('admin/sysbank/toggle_status/:id', '\app\api\controller\admin\BankController@toggleSysbankStatus', 'PUT');
 Route::rule('admin/sysbank/toggle-status', '\app\api\controller\admin\BankController@toggleSysbankStatus', 'POST');
 
+// 线路银行（linebank表）
 Route::rule('admin/linebank/list', '\app\api\controller\admin\BankController@linebankList', 'GET');
 Route::rule('admin/linebank/add', '\app\api\controller\admin\BankController@addLinebank', 'POST');
 Route::rule('admin/linebank/update/:id', '\app\api\controller\admin\BankController@updateLinebank', 'PUT');
+Route::rule('admin/linebank/update', '\app\api\controller\admin\BankController@updateLinebank', 'PUT');
 Route::rule('admin/linebank/delete/:id', '\app\api\controller\admin\BankController@deleteLinebank', 'DELETE');
+Route::rule('admin/linebank/delete', '\app\api\controller\admin\BankController@deleteLinebank', 'DELETE');
 Route::rule('admin/linebank/toggle_status/:id', '\app\api\controller\admin\BankController@toggleLinebankStatus', 'PUT');
 Route::rule('admin/linebank/toggle-status', '\app\api\controller\admin\BankController@toggleLinebankStatus', 'POST');
 

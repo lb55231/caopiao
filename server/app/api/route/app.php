@@ -116,5 +116,17 @@ Route::rule('admin/activity/update/:id', '\app\api\controller\admin\SystemContro
 Route::rule('admin/activity/delete/:id', '\app\api\controller\admin\SystemController@deleteActivity', 'DELETE');
 Route::rule('admin/upload/image', '\app\api\controller\admin\SystemController@uploadImage', 'POST');
 
+// 玩法管理
+Route::rule('admin/play/list', '\app\api\controller\admin\PlayController@list', 'GET');
+Route::rule('admin/play/update/:id', '\app\api\controller\admin\PlayController@update', 'PUT|POST');
+Route::rule('admin/play/update', '\app\api\controller\admin\PlayController@update', 'PUT|POST');
+Route::rule('admin/play/toggle-status', '\app\api\controller\admin\PlayController@toggleStatus', 'POST|PUT');
+Route::rule('admin/play/batch-rate', '\app\api\controller\admin\PlayController@batchUpdateRate', 'POST');
+
+// 注单异常检查
+Route::rule('admin/bet/check', '\app\api\controller\admin\BetCheckController@check', 'GET');
+Route::rule('admin/bet/cancel', '\app\api\controller\admin\BetCheckController@cancelBet', 'POST');
+Route::rule('admin/bet/update-code', '\app\api\controller\admin\BetCheckController@updateBetCode', 'POST');
+
 // ==================== 通用上传接口 ====================
 Route::rule('upload/image', '\app\api\controller\UploadController@image', 'POST');

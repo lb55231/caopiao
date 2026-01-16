@@ -16,9 +16,9 @@
       @change="onTabChange"
     >
       <van-tab title="全部" name="all"></van-tab>
-      <van-tab title="待开奖" name="pending"></van-tab>
-      <van-tab title="已中奖" name="won"></van-tab>
-      <van-tab title="未中奖" name="lost"></van-tab>
+      <van-tab title="待匹配" name="pending"></van-tab>
+      <van-tab title="已匹配" name="won"></van-tab>
+      <van-tab title="未匹配" name="lost"></van-tab>
     </van-tabs>
 
     <!-- 订单列表 -->

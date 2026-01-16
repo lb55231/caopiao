@@ -49,7 +49,9 @@ Route::rule('admin/lottery/type/add', '\app\api\controller\admin\LotteryControll
 Route::rule('admin/lottery/type/update/:id', '\app\api\controller\admin\LotteryController@updateType', 'PUT');
 Route::rule('admin/lottery/type/delete/:id', '\app\api\controller\admin\LotteryController@deleteType', 'DELETE');
 Route::rule('admin/lottery/toggle_status', '\app\api\controller\admin\LotteryController@toggleStatus', 'POST');
+Route::rule('admin/lottery/toggle-status', '\app\api\controller\admin\LotteryController@toggleStatus', 'POST');
 Route::rule('admin/lottery/save_order', '\app\api\controller\admin\LotteryController@saveOrder', 'POST');
+Route::rule('admin/lottery/save-order', '\app\api\controller\admin\LotteryController@saveOrder', 'POST');
 Route::rule('admin/bet/records', '\app\api\controller\admin\LotteryController@betRecords', 'GET');
 Route::rule('admin/yukaijiang', '\app\api\controller\admin\LotteryController@yukaijiang', 'GET');
 Route::rule('admin/ykjbaocun', '\app\api\controller\admin\LotteryController@ykjbaocun', 'POST');
@@ -59,6 +61,7 @@ Route::rule('admin/payset/add', '\app\api\controller\admin\BankController@addPay
 Route::rule('admin/payset/update/:id', '\app\api\controller\admin\BankController@updatePayset', 'PUT');
 Route::rule('admin/payset/delete/:id', '\app\api\controller\admin\BankController@deletePayset', 'DELETE');
 Route::rule('admin/payset/toggle_status/:id', '\app\api\controller\admin\BankController@togglePaysetStatus', 'PUT');
+Route::rule('admin/payset/toggle-status', '\app\api\controller\admin\BankController@togglePaysetStatus', 'POST');
 Route::rule('admin/payset/listorder', '\app\api\controller\admin\BankController@savePaysetOrder', 'POST');
 
 Route::rule('admin/sysbank/list', '\app\api\controller\admin\BankController@sysbankList', 'GET');
@@ -66,12 +69,14 @@ Route::rule('admin/sysbank/add', '\app\api\controller\admin\BankController@addSy
 Route::rule('admin/sysbank/update/:id', '\app\api\controller\admin\BankController@updateSysbank', 'PUT');
 Route::rule('admin/sysbank/delete/:id', '\app\api\controller\admin\BankController@deleteSysbank', 'DELETE');
 Route::rule('admin/sysbank/toggle_status/:id', '\app\api\controller\admin\BankController@toggleSysbankStatus', 'PUT');
+Route::rule('admin/sysbank/toggle-status', '\app\api\controller\admin\BankController@toggleSysbankStatus', 'POST');
 
 Route::rule('admin/linebank/list', '\app\api\controller\admin\BankController@linebankList', 'GET');
 Route::rule('admin/linebank/add', '\app\api\controller\admin\BankController@addLinebank', 'POST');
 Route::rule('admin/linebank/update/:id', '\app\api\controller\admin\BankController@updateLinebank', 'PUT');
 Route::rule('admin/linebank/delete/:id', '\app\api\controller\admin\BankController@deleteLinebank', 'DELETE');
 Route::rule('admin/linebank/toggle_status/:id', '\app\api\controller\admin\BankController@toggleLinebankStatus', 'PUT');
+Route::rule('admin/linebank/toggle-status', '\app\api\controller\admin\BankController@toggleLinebankStatus', 'POST');
 
 Route::rule('admin/settings', '\app\api\controller\admin\SystemController@settings', 'GET');
 Route::rule('admin/settings/save', '\app\api\controller\admin\SystemController@saveSettings', 'POST');

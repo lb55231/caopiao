@@ -20,19 +20,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// ===== 特殊处理：api/admin 目录下的独立 PHP 接口文件 =====
-// 检查是否是 /api/admin/* 的请求
+// ===== 特殊处理：api 目录下的独立 PHP 接口文件 =====
+// 检查是否是 /api/* 的请求
 $requestUri = $_SERVER['REQUEST_URI'] ?? '';
 $requestPath = parse_url($requestUri, PHP_URL_PATH);
 
-if (preg_match('#^/api/admin/(.+)$#', $requestPath, $matches)) {
-    $adminPath = $matches[1];
+if (preg_match('#^/api/(.+)$#', $requestPath, $matches)) {
+    $apiPath = $matches[1];
+    
     // 如果没有 .php 后缀，自动添加
-    if (!str_ends_with($adminPath, '.php')) {
-        $adminPath .= '.php';
+    if (!str_ends_with($apiPath, '.php')) {
+        // 将路径转换为文件名（文件名使用下划线命名）
+        // 1. 斜杠 / 转为下划线 _
+        // 2. 连字符 - 转为下划线 _
+        // 3. 移除路径末尾的数字ID（通常是 /数字 格式）
+        // 例如：admin/lottery/type/update/137 -> admin/lottery_type_update.php
+        
+        // 先移除路径末尾的数字ID
+        $apiPath = preg_replace('#/\d+$#', '', $apiPath);
+        
+        // 按斜杠分割路径
+        $parts = explode('/', $apiPath);
+        
+        // 如果是 admin 目录，第一部分是 admin，后面的部分合并并转换
+        if (count($parts) > 1 && $parts[0] === 'admin') {
+            // admin 目录下的文件：admin/xxx/yyy -> admin/xxx_yyy.php
+            $firstPart = array_shift($parts); // 取出 'admin'
+            $restPath = implode('/', $parts); // 剩余路径
+            $restPath = str_replace(['/', '-'], '_', $restPath); // 转换为下划线
+            $apiPath = $firstPart . '/' . $restPath . '.php';
+        } else {
+            // 其他文件：upload/image -> upload_image.php
+            $apiPath = str_replace(['/', '-'], '_', $apiPath) . '.php';
+        }
     }
     
-    $phpFile = __DIR__ . '/api/admin/' . $adminPath;
+    $phpFile = __DIR__ . '/api/' . $apiPath;
     
     // 如果文件存在，直接执行
     if (file_exists($phpFile) && is_file($phpFile)) {

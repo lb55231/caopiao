@@ -170,6 +170,7 @@
             <el-upload
               class="logo-uploader"
               :action="uploadAction"
+              :headers="uploadHeaders"
               :show-file-list="false"
               :on-success="handleLogoSuccess"
               :before-upload="beforeLogoUpload"
@@ -251,6 +252,8 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Refresh, Edit, Delete } from '@element-plus/icons-vue'
+import env from '../../../env'
+import { useAdminStore } from '@/stores/admin'
 import { getLotteryTypes, addLotteryType, updateLotteryType, deleteLotteryType, toggleLotteryStatus, saveLotteryOrder } from '@/api/lottery'
 import { getImageUrl } from '@/utils/image'
 
@@ -295,8 +298,15 @@ const form = reactive({
   listorder: 0
 })
 
-// 图片上传地址 (使用代理路径)
-const uploadAction = '/adminapi/upload/image'
+// 获取管理员 store
+const adminStore = useAdminStore()
+
+// 图片上传配置
+const uploadAction = computed(() => env.adminBaseURL + '/upload/image')
+const uploadHeaders = computed(() => ({
+  'Authorization': `Bearer ${adminStore.token}`,
+  'Token': adminStore.token
+}))
 
 // 表单验证规则
 const rules = {

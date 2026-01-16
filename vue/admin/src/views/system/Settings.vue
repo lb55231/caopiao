@@ -163,9 +163,10 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
+import env from '../../../env'
 import { getImageUrl } from '@/utils/image'
 import { useAdminStore } from '@/stores/admin'
 
@@ -189,11 +190,11 @@ const settingsForm = reactive({
 })
 
 // 上传配置
-const uploadAction = '/adminapi/upload/image'
-const uploadHeaders = {
+const uploadAction = computed(() => env.adminBaseURL + '/upload/image')
+const uploadHeaders = computed(() => ({
   'Authorization': `Bearer ${adminStore.token}`,
   'Token': adminStore.token
-}
+}))
 
 // 加载设置
 const loadSettings = async () => {

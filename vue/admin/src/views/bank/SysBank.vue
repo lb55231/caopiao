@@ -131,9 +131,10 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
+import env from '../../../env'
 import { getSysBankList, addSysBank, updateSysBank, deleteSysBank, toggleSysBankStatus } from '@/api/bank'
 import { getImageUrl } from '@/utils/image'
 import { useAdminStore } from '@/stores/admin'
@@ -161,11 +162,11 @@ const form = reactive({
 })
 
 // 上传配置
-const uploadAction = '/adminapi/upload/image'
-const uploadHeaders = {
+const uploadAction = computed(() => env.adminBaseURL + '/upload/image')
+const uploadHeaders = computed(() => ({
   'Authorization': `Bearer ${adminStore.token}`,
   'Token': adminStore.token
-}
+}))
 
 // 加载列表
 const loadList = async () => {

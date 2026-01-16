@@ -206,9 +206,10 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Refresh } from '@element-plus/icons-vue'
+import env from '../../../env'
 import { getPaySetList, addPaySet, updatePaySet, deletePaySet, togglePaySetStatus, updatePaySetOrder } from '@/api/bank'
 import { useAdminStore } from '@/stores/admin'
 import { getImageUrl } from '@/utils/image'
@@ -221,10 +222,11 @@ const total = ref(0)
 const selectedIds = ref([])
 
 // 图片上传配置
-const uploadAction = '/adminapi/upload/image'
-const uploadHeaders = {
-  'Authorization': `Bearer ${adminStore.token}`
-}
+const uploadAction = computed(() => env.adminBaseURL + '/upload/image')
+const uploadHeaders = computed(() => ({
+  'Authorization': `Bearer ${adminStore.token}`,
+  'Token': adminStore.token
+}))
 
 // 对话框
 const dialogVisible = ref(false)

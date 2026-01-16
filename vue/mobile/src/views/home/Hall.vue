@@ -49,11 +49,7 @@
       <van-empty v-else description="暂无数据" />
     </div>
 
-    <van-tabbar v-model="tabbarActive" route>
-      <van-tabbar-item icon="wap-home-o" to="/home">首页</van-tabbar-item>
-      <van-tabbar-item icon="shopping-cart-o" to="/hall">下单</van-tabbar-item>
-      <van-tabbar-item icon="user-o" to="/user">我的</van-tabbar-item>
-    </van-tabbar>
+    <Tabbar />
   </div>
 </template>
 
@@ -62,13 +58,16 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getLotteryTypes, getCurrentPeriod, getLotteryHistory } from '@/api/lottery'
 import { showToast } from 'vant'
+import Tabbar from '@/components/Tabbar.vue'
 
 export default {
   name: 'Hall',
+  components: {
+    Tabbar
+  },
   setup() {
     const router = useRouter()
     const activeTab = ref('k3')
-    const tabbarActive = ref(1)
     const loading = ref(false)
     const allLotteryList = ref([])
 
@@ -190,7 +189,6 @@ export default {
 
     return {
       activeTab,
-      tabbarActive,
       loading,
       currentList,
       onTabChange,

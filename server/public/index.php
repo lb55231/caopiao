@@ -34,10 +34,12 @@ if (preg_match('#^/api/(.+)$#', $requestPath, $matches)) {
         // 1. 斜杠 / 转为下划线 _
         // 2. 连字符 - 转为下划线 _
         // 3. 移除路径末尾的数字ID（通常是 /数字 格式）
+        // 4. 移除路径末尾的 undefined、null 等无效参数
         // 例如：admin/lottery/type/update/137 -> admin/lottery_type_update.php
+        // 例如：admin/member/change_balance/undefined -> admin/member_change_balance.php
         
-        // 先移除路径末尾的数字ID
-        $apiPath = preg_replace('#/\d+$#', '', $apiPath);
+        // 移除路径末尾的无效参数（数字ID、undefined、null）
+        $apiPath = preg_replace('#/(undefined|null|\d+)$#', '', $apiPath);
         
         // 按斜杠分割路径
         $parts = explode('/', $apiPath);

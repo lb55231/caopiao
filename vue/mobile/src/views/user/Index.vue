@@ -90,11 +90,7 @@
     </div>
 
     <!-- 底部导航 -->
-    <van-tabbar v-model="active" route>
-      <van-tabbar-item icon="wap-home-o" to="/home">首页</van-tabbar-item>
-      <van-tabbar-item icon="shopping-cart-o" to="/hall">下单</van-tabbar-item>
-      <van-tabbar-item icon="user-o" to="/user">我的</van-tabbar-item>
-    </van-tabbar>
+    <Tabbar />
   </div>
 </template>
 
@@ -104,13 +100,16 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { showDialog, showToast } from 'vant'
 import request from '@/api/request'
+import Tabbar from '@/components/Tabbar.vue'
 
 export default {
   name: 'UserCenter',
+  components: {
+    Tabbar
+  },
   setup() {
     const router = useRouter()
     const userStore = useUserStore()
-    const active = ref(2)
     const siteConfig = ref({})
 
     const userInfo = computed(() => userStore.userInfo || {})
@@ -186,7 +185,6 @@ export default {
     })
 
     return {
-      active,
       userInfo,
       handleContactService,
       handleLogout

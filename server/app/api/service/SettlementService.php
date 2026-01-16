@@ -16,12 +16,13 @@ class SettlementService
         $prefix = config('database.connections.mysql.prefix');
         
         // 获取所有未结算的期号（有开奖结果但投注未结算）
+        // 每次处理100个期号，提高结算效率
         $periods = $db->query("
             SELECT DISTINCT t.cpname, t.expect 
             FROM {$prefix}touzhu t
             INNER JOIN {$prefix}kaijiang k ON t.cpname = k.name AND t.expect = k.expect
-            WHERE t.isdraw = 0 AND k.opencode IS NOT NULL AND k.opencode != ''
-            LIMIT 10
+            WHERE t.isdraw = -1 AND k.opencode IS NOT NULL AND k.opencode != ''
+            LIMIT 100
         ");
         
         $settledCount = 0;
@@ -48,7 +49,7 @@ class SettlementService
             $bets = $db->table($prefix . 'touzhu')
                 ->where('cpname', $cpname)
                 ->where('expect', $expect)
-                ->where('isdraw', 0)
+                ->where('isdraw', -1)
                 ->select()
                 ->toArray();
             
@@ -110,7 +111,7 @@ class SettlementService
                         $db->table($prefix . 'touzhu')
                             ->where('id', $bet['id'])
                             ->update([
-                                'isdraw' => -1,
+                                'isdraw' => 0,
                                 'okamount' => 0,
                                 'okcount' => 0,
                                 'opencode' => $opencode

@@ -163,10 +163,10 @@ class BetService
             throw new \Exception('余额不足');
         }
         
-        // 检查洗码余额
-        if ($user['xima'] < $totalAmount) {
-            throw new \Exception('洗码余额不足，请先充值');
-        }
+        // 注释：洗码余额不需要检查，下注只扣除普通余额
+        // if ($user['xima'] < $totalAmount) {
+        //     throw new \Exception('洗码余额不足，请先充值');
+        // }
         
         // 检查期号是否还能投注
         $nowTime = time();
@@ -225,12 +225,11 @@ class BetService
             // 批量插入投注记录
             $db->table($prefix . 'touzhu')->insertAll($insertData);
             
-            // 更新用户余额
+            // 更新用户余额（只扣除普通余额，不扣除洗码余额）
             $db->table($prefix . 'member')
                 ->where('id', $userId)
                 ->update([
-                    'balance' => $newBalance,
-                    'xima' => $user['xima'] - $totalAmount
+                    'balance' => $newBalance
                 ]);
             
             // 记录账变
@@ -250,22 +249,22 @@ class BetService
                 'ticket_income_report' => 0
             ]);
             
-            // 记录洗码账变
-            $db->table($prefix . 'fuddetail')->insert([
-                'trano' => 'XM' . date('ymdHis') . rand(10, 99),
-                'uid' => $userId,
-                'username' => $user['username'],
-                'type' => 'xima',
-                'typename' => '洗码',
-                'amount' => -$totalAmount,
-                'amountbefor' => $user['xima'],
-                'amountafter' => $user['xima'] - $totalAmount,
-                'oddtime' => $nowTime,
-                'remark' => "投注扣除洗码余额{$totalAmount}元",
-                'expect' => $period,
-                'status_show' => 1,
-                'ticket_income_report' => 0
-            ]);
+            // 注释：不再记录洗码账变，因为下注不扣除洗码余额
+            // $db->table($prefix . 'fuddetail')->insert([
+            //     'trano' => 'XM' . date('ymdHis') . rand(10, 99),
+            //     'uid' => $userId,
+            //     'username' => $user['username'],
+            //     'type' => 'xima',
+            //     'typename' => '洗码',
+            //     'amount' => -$totalAmount,
+            //     'amountbefor' => $user['xima'],
+            //     'amountafter' => $user['xima'] - $totalAmount,
+            //     'oddtime' => $nowTime,
+            //     'remark' => "投注扣除洗码余额{$totalAmount}元",
+            //     'expect' => $period,
+            //     'status_show' => 1,
+            //     'ticket_income_report' => 0
+            // ]);
             
             Db::commit();
             

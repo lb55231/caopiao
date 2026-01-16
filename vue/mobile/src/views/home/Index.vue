@@ -67,11 +67,7 @@
     </div>
 
     <!-- 底部导航 -->
-    <van-tabbar v-model="active" route>
-      <van-tabbar-item to="/" icon="wap-home-o">首页</van-tabbar-item>
-      <van-tabbar-item to="/hall" icon="apps-o">大厅</van-tabbar-item>
-      <van-tabbar-item to="/user" icon="user-o">我的</van-tabbar-item>
-    </van-tabbar>
+    <Tabbar />
   </div>
 </template>
 
@@ -81,12 +77,15 @@ import { useRouter } from 'vue-router'
 import { showToast } from 'vant'
 import { getLotteryList, getNotice, getRanking } from '@/api/lottery'
 import { getImageUrl } from '@/utils/image'
+import Tabbar from '@/components/Tabbar.vue'
 
 export default {
   name: 'HomePage',
+  components: {
+    Tabbar
+  },
   setup() {
     const router = useRouter()
-    const active = ref(0)
     const noticeText = ref('欢迎光临！祝您游戏愉快！')
     const noticeId = ref(0)
     const lotteryList = ref([])
@@ -194,7 +193,6 @@ export default {
     })
 
     return {
-      active,
       noticeText,
       lotteryList,
       rankingList,
@@ -211,7 +209,7 @@ export default {
 .home-page {
   min-height: 100vh;
   background: #f5f5f5;
-  padding-bottom: 60px;
+  padding-bottom: 50px;
 }
 
 /* 轮播图 */
@@ -390,9 +388,5 @@ export default {
       }
     }
   }
-}
-
-:deep(.van-tabbar) {
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
 }
 </style>

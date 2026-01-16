@@ -13,6 +13,24 @@ const routes = [
     meta: { title: '首页', keepAlive: true }
   },
   {
+    path: '/orders',
+    name: 'Orders',
+    component: () => import('@/views/orders/Index.vue'),
+    meta: { title: '我的订单', requiresAuth: true }
+  },
+  {
+    path: '/merchants',
+    name: 'Merchants',
+    component: () => import('@/views/merchants/Index.vue'),
+    meta: { title: '商家列表', keepAlive: true }
+  },
+  {
+    path: '/activity',
+    name: 'Activity',
+    component: () => import('@/views/activity/Index.vue'),
+    meta: { title: '活动中心', keepAlive: true }
+  },
+  {
     path: '/hall',
     name: 'Hall',
     component: () => import('@/views/home/Hall.vue'),

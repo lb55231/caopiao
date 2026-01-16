@@ -757,6 +757,16 @@ class LotteryController extends AdminBaseController
                 }
             }
 
+            // 查询已开奖的期号（需要过滤掉）
+            $kaijiangStmt = $pdo->prepare("SELECT expect FROM {$prefix}kaijiang WHERE name = :name");
+            $kaijiangStmt->execute([':name' => $name]);
+            $kaijiangList = $kaijiangStmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            $kaijiangExpects = [];
+            foreach ($kaijiangList as $kj) {
+                $kaijiangExpects[$kj['expect']] = true;
+            }
+
             // 查询预开奖表，标记已保存的期号
             $yukaijiangStmt = $pdo->prepare("SELECT * FROM {$prefix}yukaijiang WHERE name = :name AND hid = 0");
             $yukaijiangStmt->execute([':name' => $name]);
@@ -767,7 +777,14 @@ class LotteryController extends AdminBaseController
                 $yukaijiangMap[$ykj['expect']] = $ykj;
             }
 
-            foreach ($openlist as $k => $v) {
+            // 过滤已开奖的期号，并标记预开奖状态
+            $filteredOpenlist = [];
+            foreach ($openlist as $v) {
+                // 如果该期号已经在开奖表中，则跳过
+                if (isset($kaijiangExpects[$v['expect']])) {
+                    continue;
+                }
+                
                 $v['isbc'] = 0;
                 $v['stateadmin'] = '';
                 if (isset($yukaijiangMap[$v['expect']])) {
@@ -775,8 +792,10 @@ class LotteryController extends AdminBaseController
                     $v['isbc'] = 1;
                     $v['stateadmin'] = $yukaijiangMap[$v['expect']]['stateadmin'] ?? '';
                 }
-                $openlist[$k] = $v;
+                $filteredOpenlist[] = $v;
             }
+            
+            $openlist = $filteredOpenlist;
 
             // 按期号排序
             usort($openlist, function($a, $b) {

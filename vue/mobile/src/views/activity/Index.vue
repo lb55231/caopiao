@@ -18,7 +18,7 @@
         <img src="/images/banner/2.jpg" alt="活动2" />
       </div>
       <div class="activity-banner">
-        <img src="/images/banner/3.jpg" alt="活动3" />
+        <!-- <img src="/images/banner/3.jpg" alt="活动3" /> -->
       </div>
     </div>
 

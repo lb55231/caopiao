@@ -123,8 +123,9 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import { getRechargeList } from '@/api/finance'
 
 const loading = ref(false)
 
@@ -137,59 +138,10 @@ const searchForm = reactive({
 const pagination = reactive({
   page: 1,
   size: 10,
-  total: 50
+  total: 0
 })
 
-const tableData = ref([
-  {
-    id: 1,
-    orderNo: 'RC202403201234567890',
-    amount: '10,000.00',
-    payType: 1,
-    payTypeName: '银行卡',
-    status: 1,
-    statusName: '成功',
-    remark: '银行卡转账充值',
-    createTime: '2024-03-20 14:25:30',
-    payTime: '2024-03-20 14:30:25'
-  },
-  {
-    id: 2,
-    orderNo: 'RC202403201234567891',
-    amount: '5,000.00',
-    payType: 2,
-    payTypeName: '支付宝',
-    status: 0,
-    statusName: '待支付',
-    remark: '支付宝充值',
-    createTime: '2024-03-20 15:00:15',
-    payTime: null
-  },
-  {
-    id: 3,
-    orderNo: 'RC202403201234567892',
-    amount: '8,000.00',
-    payType: 3,
-    payTypeName: '微信',
-    status: 1,
-    statusName: '成功',
-    remark: '微信转账充值',
-    createTime: '2024-03-20 16:20:40',
-    payTime: '2024-03-20 16:25:50'
-  },
-  {
-    id: 4,
-    orderNo: 'RC202403201234567893',
-    amount: '3,000.00',
-    payType: 1,
-    payTypeName: '银行卡',
-    status: 2,
-    statusName: '失败',
-    remark: '银行卡转账充值',
-    createTime: '2024-03-20 17:10:20',
-    payTime: '2024-03-20 17:15:30'
-  }
-])
+const tableData = ref([])
 
 const getPayTypeTag = (type) => {
   const tags = {
@@ -204,17 +156,57 @@ const getStatusTag = (status) => {
   const tags = {
     0: 'info',
     1: 'success',
-    2: 'danger'
+    2: 'danger',
+    '-1': 'danger'
   }
   return tags[status] || ''
 }
 
-const handleSearch = () => {
+const getStatusName = (status) => {
+  const names = {
+    0: '待审核',
+    1: '成功',
+    2: '失败',
+    '-1': '拒绝'
+  }
+  return names[status] || '未知'
+}
+
+// 获取充值记录
+const fetchData = async () => {
   loading.value = true
-  setTimeout(() => {
+  try {
+    const data = await getRechargeList({
+      page: pagination.page,
+      pageSize: pagination.size,
+      state: searchForm.status
+    })
+
+    tableData.value = (data.list || []).map(item => ({
+      id: item.id,
+      orderNo: item.trano || '-',
+      amount: parseFloat(item.amount || 0).toFixed(2),
+      payType: item.isauto || 1,
+      payTypeName: item.isauto == 1 ? '自动' : '人工',
+      status: item.state,
+      statusName: getStatusName(item.state),
+      remark: item.remark || '-',
+      createTime: item.oddtime ? new Date(item.oddtime * 1000).toLocaleString('zh-CN') : '-',
+      payTime: item.state == 1 && item.oddtime ? new Date(item.oddtime * 1000).toLocaleString('zh-CN') : null
+    }))
+    
+    pagination.total = data.total || 0
+  } catch (error) {
+    console.error('获取充值记录失败:', error)
+    ElMessage.error(error.message || '获取数据失败')
+  } finally {
     loading.value = false
-    ElMessage.success('查询成功')
-  }, 500)
+  }
+}
+
+const handleSearch = () => {
+  pagination.page = 1
+  fetchData()
 }
 
 const handleReset = () => {
@@ -237,12 +229,16 @@ const handleDetail = (row) => {
 }
 
 const handleSizeChange = () => {
-  handleSearch()
+  fetchData()
 }
 
 const handleCurrentChange = () => {
-  handleSearch()
+  fetchData()
 }
+
+onMounted(() => {
+  fetchData()
+})
 </script>
 
 <style lang="scss" scoped>

@@ -157,13 +157,11 @@ const getTypeName = (typeid) => {
 const fetchData = async () => {
   loading.value = true
   try {
-    const res = await getLotteryList({})
-    if (res.code === 1 && res.data) {
-      tableData.value = res.data.list || []
-    }
+    const data = await getLotteryList({})
+    tableData.value = data.list || []
   } catch (error) {
     console.error('获取彩票列表失败:', error)
-    ElMessage.error('获取数据失败')
+    ElMessage.error(error.message || '获取数据失败')
   } finally {
     loading.value = false
   }
@@ -178,24 +176,9 @@ const handleReset = () => {
 }
 
 const handleStatusChange = async (row, field) => {
-  try {
-    const res = await updateLotteryStatus({
-      id: row.id,
-      field: field
-    })
-    
-    if (res.code === 1) {
-      const statusText = field === 'isopen' ? (row.isopen ? '开启' : '关闭') : (row.iswh ? '维护' : '正常')
-      ElMessage.success(`${row.title} ${field === 'isopen' ? '状态' : '维护状态'}已${statusText}`)
-    } else {
-      // 恢复原状态
-      row[field] = row[field] === 1 ? 0 : 1
-    }
-  } catch (error) {
-    console.error('更新状态失败:', error)
-    // 恢复原状态
-    row[field] = row[field] === 1 ? 0 : 1
-  }
+  ElMessage.warning('代理端不支持修改彩种状态')
+  // 恢复原状态
+  row[field] = row[field] === 1 ? 0 : 1
 }
 
 const handleEdit = (row) => {

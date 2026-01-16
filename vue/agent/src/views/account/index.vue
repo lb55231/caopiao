@@ -76,7 +76,7 @@
           <el-tag type="success">{{ accountInfo.level }}</el-tag>
         </el-descriptions-item>
         <el-descriptions-item label="真实姓名">
-          {{ accountInfo.realName }}
+          {{ accountInfo.realname }}
         </el-descriptions-item>
         <el-descriptions-item label="联系电话">
           {{ accountInfo.phone }}
@@ -101,27 +101,60 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import { getAccountInfo } from '@/api/account'
 
+const loading = ref(false)
 const accountInfo = ref({
-  username: 'agent001',
-  realName: '张三',
-  phone: '13800138000',
-  level: '一级代理',
+  username: '-',
+  realname: '-',
+  phone: '-',
+  level: '代理',
   status: 1,
-  balance: '125,680.50',
-  todayProfit: '3,280.00',
-  totalProfit: '56,890.00',
-  userCount: 128,
-  registerTime: '2024-01-15 10:30:25',
-  lastLoginTime: '2024-03-20 14:25:30',
-  remark: '优质代理'
+  balance: '0.00',
+  todayProfit: '0.00',
+  totalProfit: '0.00',
+  userCount: 0,
+  registerTime: '-',
+  lastLoginTime: '-',
+  remark: '-'
 })
+
+// 获取账户信息
+const fetchAccountInfo = async () => {
+  loading.value = true
+  try {
+    const data = await getAccountInfo()
+    accountInfo.value = {
+      username: data.username || '-',
+      realname: data.realname || '-',
+      phone: data.phone || '-',
+      level: data.level || '代理',
+      status: data.status || 1,
+      balance: data.balance || '0.00',
+      todayProfit: data.todayProfit || '0.00',
+      totalProfit: data.totalProfit || '0.00',
+      userCount: data.userCount || 0,
+      registerTime: data.registerTime || '-',
+      lastLoginTime: data.lastLoginTime || '-',
+      remark: data.remark || '-'
+    }
+  } catch (error) {
+    console.error('获取账户信息失败:', error)
+    ElMessage.error('获取账户信息失败')
+  } finally {
+    loading.value = false
+  }
+}
 
 const handleEdit = () => {
   ElMessage.info('编辑功能开发中...')
 }
+
+onMounted(() => {
+  fetchAccountInfo()
+})
 </script>
 
 <style lang="scss" scoped>

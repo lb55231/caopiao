@@ -13472,3 +13472,175 @@
 [2026-01-16T22:43:20+08:00][sql] CONNECT:[ UseTime:0.022859s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
 [2026-01-16T22:43:20+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_touzhu` [ RunTime:0.001030s ]
 [2026-01-16T22:43:20+08:00][sql] SELECT MAX(cptitle) as k3name, username, SUM(okamount) as okamount FROM `caipiao_touzhu` WHERE  `oddtime` >= 1767888000  AND `oddtime` <= 1768574600  AND `isdraw` = 1  AND `cpname` IN ('f5k3','hebk3') GROUP BY `uid`,`username` ORDER BY `okamount` DESC LIMIT 50 [ RunTime:0.000609s ]
+[2026-01-16T22:58:43+08:00][sql] CONNECT:[ UseTime:0.000883s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:43+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_caipiao` [ RunTime:0.001714s ]
+[2026-01-16T22:58:43+08:00][sql] SELECT * FROM `caipiao_caipiao` WHERE  `isopen` = 1 ORDER BY `listorder` ASC,`id` ASC [ RunTime:0.000674s ]
+[2026-01-16T22:58:43+08:00][sql] CONNECT:[ UseTime:0.003663s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:43+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_caipiao` [ RunTime:0.001152s ]
+[2026-01-16T22:58:43+08:00][sql] SELECT * FROM `caipiao_caipiao` WHERE  `name` = 'jlk3'  AND `isopen` = 1 LIMIT 1 [ RunTime:0.000346s ]
+[2026-01-16T22:58:43+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_kaijiang` [ RunTime:0.000799s ]
+[2026-01-16T22:58:43+08:00][sql] SELECT * FROM `caipiao_kaijiang` WHERE  `name` = 'jlk3'  AND `expect` = '20260116275' ORDER BY `id` DESC LIMIT 1 [ RunTime:0.001226s ]
+[2026-01-16T22:58:43+08:00][sql] SELECT * FROM `caipiao_kaijiang` WHERE  `name` = 'jlk3'  AND `opencode` <> ''  AND `opencode` IS NOT NULL ORDER BY `id` DESC LIMIT 1 [ RunTime:0.000703s ]
+[2026-01-16T22:58:45+08:00][sql] CONNECT:[ UseTime:0.000939s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:45+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_caipiao` [ RunTime:0.001131s ]
+[2026-01-16T22:58:45+08:00][sql] SELECT * FROM `caipiao_caipiao` WHERE  `isopen` = 1 ORDER BY `listorder` ASC,`id` ASC [ RunTime:0.000306s ]
+[2026-01-16T22:58:45+08:00][sql] CONNECT:[ UseTime:0.000678s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:45+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_gonggao` [ RunTime:0.001060s ]
+[2026-01-16T22:58:45+08:00][sql] SELECT * FROM `caipiao_gonggao` WHERE  `user_id` = 0 ORDER BY `id` DESC LIMIT 1 [ RunTime:0.000340s ]
+[2026-01-16T22:58:45+08:00][sql] CONNECT:[ UseTime:0.025725s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:45+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_touzhu` [ RunTime:0.001106s ]
+[2026-01-16T22:58:45+08:00][sql] SELECT MAX(cptitle) as k3name, username, SUM(okamount) as okamount FROM `caipiao_touzhu` WHERE  `oddtime` >= 1767888000  AND `oddtime` <= 1768575525  AND `isdraw` = 1  AND `cpname` IN ('f5k3','hebk3') GROUP BY `uid`,`username` ORDER BY `okamount` DESC LIMIT 50 [ RunTime:0.001559s ]
+[2026-01-16T22:58:46+08:00][sql] CONNECT:[ UseTime:0.020016s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:46+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_caipiao` [ RunTime:0.001093s ]
+[2026-01-16T22:58:46+08:00][sql] SELECT * FROM `caipiao_caipiao` WHERE  `isopen` = 1 ORDER BY `listorder` ASC,`id` ASC [ RunTime:0.000300s ]
+[2026-01-16T22:58:46+08:00][sql] CONNECT:[ UseTime:0.022913s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:46+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_caipiao` [ RunTime:0.001405s ]
+[2026-01-16T22:58:46+08:00][sql] SELECT * FROM `caipiao_caipiao` WHERE  `name` = 'hebk3'  AND `isopen` = 1 LIMIT 1 [ RunTime:0.000302s ]
+[2026-01-16T22:58:46+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_kaijiang` [ RunTime:0.000728s ]
+[2026-01-16T22:58:46+08:00][sql] SELECT * FROM `caipiao_kaijiang` WHERE  `name` = 'hebk3'  AND `expect` = '20260116275' ORDER BY `id` DESC LIMIT 1 [ RunTime:0.000761s ]
+[2026-01-16T22:58:46+08:00][sql] SELECT * FROM `caipiao_kaijiang` WHERE  `name` = 'hebk3'  AND `opencode` <> ''  AND `opencode` IS NOT NULL ORDER BY `id` DESC LIMIT 1 [ RunTime:0.001751s ]
+[2026-01-16T22:58:47+08:00][sql] CONNECT:[ UseTime:0.011158s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:47+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_caipiao` [ RunTime:0.002965s ]
+[2026-01-16T22:58:47+08:00][sql] SELECT * FROM `caipiao_caipiao` WHERE  `isopen` = 1 ORDER BY `listorder` ASC,`id` ASC [ RunTime:0.000390s ]
+[2026-01-16T22:58:47+08:00][sql] CONNECT:[ UseTime:0.011394s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:47+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_gonggao` [ RunTime:0.001506s ]
+[2026-01-16T22:58:47+08:00][sql] SELECT * FROM `caipiao_gonggao` WHERE  `user_id` = 0 ORDER BY `id` DESC LIMIT 1 [ RunTime:0.000330s ]
+[2026-01-16T22:58:47+08:00][sql] CONNECT:[ UseTime:0.001025s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:47+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_touzhu` [ RunTime:0.002625s ]
+[2026-01-16T22:58:47+08:00][sql] SELECT MAX(cptitle) as k3name, username, SUM(okamount) as okamount FROM `caipiao_touzhu` WHERE  `oddtime` >= 1767888000  AND `oddtime` <= 1768575527  AND `isdraw` = 1  AND `cpname` IN ('f5k3','hebk3') GROUP BY `uid`,`username` ORDER BY `okamount` DESC LIMIT 50 [ RunTime:0.002031s ]
+[2026-01-16T22:58:49+08:00][sql] CONNECT:[ UseTime:0.000723s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:49+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_caipiao` [ RunTime:0.001271s ]
+[2026-01-16T22:58:49+08:00][sql] SELECT * FROM `caipiao_caipiao` WHERE  `isopen` = 1 ORDER BY `listorder` ASC,`id` ASC [ RunTime:0.000348s ]
+[2026-01-16T22:58:49+08:00][sql] CONNECT:[ UseTime:0.000625s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:49+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_caipiao` [ RunTime:0.001000s ]
+[2026-01-16T22:58:49+08:00][sql] SELECT * FROM `caipiao_caipiao` WHERE  `name` = 'gxk3'  AND `isopen` = 1 LIMIT 1 [ RunTime:0.000302s ]
+[2026-01-16T22:58:49+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_kaijiang` [ RunTime:0.000781s ]
+[2026-01-16T22:58:49+08:00][sql] SELECT * FROM `caipiao_kaijiang` WHERE  `name` = 'gxk3'  AND `expect` = '20260116459' ORDER BY `id` DESC LIMIT 1 [ RunTime:0.000819s ]
+[2026-01-16T22:58:49+08:00][sql] SELECT * FROM `caipiao_kaijiang` WHERE  `name` = 'gxk3'  AND `opencode` <> ''  AND `opencode` IS NOT NULL ORDER BY `id` DESC LIMIT 1 [ RunTime:0.000513s ]
+[2026-01-16T22:58:50+08:00][sql] CONNECT:[ UseTime:0.014005s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:50+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_caipiao` [ RunTime:0.001132s ]
+[2026-01-16T22:58:50+08:00][sql] SELECT * FROM `caipiao_caipiao` WHERE  `isopen` = 1 ORDER BY `listorder` ASC,`id` ASC [ RunTime:0.000360s ]
+[2026-01-16T22:58:50+08:00][sql] CONNECT:[ UseTime:0.010507s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:50+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_gonggao` [ RunTime:0.001102s ]
+[2026-01-16T22:58:50+08:00][sql] SELECT * FROM `caipiao_gonggao` WHERE  `user_id` = 0 ORDER BY `id` DESC LIMIT 1 [ RunTime:0.000303s ]
+[2026-01-16T22:58:50+08:00][sql] CONNECT:[ UseTime:0.025355s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:50+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_touzhu` [ RunTime:0.001040s ]
+[2026-01-16T22:58:50+08:00][sql] SELECT MAX(cptitle) as k3name, username, SUM(okamount) as okamount FROM `caipiao_touzhu` WHERE  `oddtime` >= 1767888000  AND `oddtime` <= 1768575530  AND `isdraw` = 1  AND `cpname` IN ('f5k3','hebk3') GROUP BY `uid`,`username` ORDER BY `okamount` DESC LIMIT 50 [ RunTime:0.000641s ]
+[2026-01-16T22:58:51+08:00][sql] CONNECT:[ UseTime:0.000633s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:51+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_member` [ RunTime:0.001060s ]
+[2026-01-16T22:58:51+08:00][sql] SELECT * FROM `caipiao_member` WHERE  `id` = 1 LIMIT 1 [ RunTime:0.000437s ]
+[2026-01-16T22:58:51+08:00][sql] CONNECT:[ UseTime:0.000648s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:51+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_setting` [ RunTime:0.000821s ]
+[2026-01-16T22:58:51+08:00][sql] SELECT `value`,`name` FROM `caipiao_setting` WHERE  `name` IN ('webtitle','weblogo','keywords','description','copyright','icp','serviceqq','servicecode') [ RunTime:0.000283s ]
+[2026-01-16T22:58:52+08:00][sql] CONNECT:[ UseTime:0.002500s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:52+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_touzhu` [ RunTime:0.001308s ]
+[2026-01-16T22:58:52+08:00][sql] SELECT * FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 ORDER BY `id` DESC LIMIT 0,20 [ RunTime:0.001575s ]
+[2026-01-16T22:58:52+08:00][sql] SELECT COUNT(*) AS think_count FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 LIMIT 1 [ RunTime:0.000409s ]
+[2026-01-16T22:58:52+08:00][sql] SELECT SUM(`amount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 LIMIT 1 [ RunTime:0.000289s ]
+[2026-01-16T22:58:52+08:00][sql] SELECT SUM(`okamount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 LIMIT 1 [ RunTime:0.001767s ]
+[2026-01-16T22:58:52+08:00][sql] CONNECT:[ UseTime:0.000706s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:52+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_touzhu` [ RunTime:0.000965s ]
+[2026-01-16T22:58:52+08:00][sql] SELECT * FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 ORDER BY `id` DESC LIMIT 0,20 [ RunTime:0.000458s ]
+[2026-01-16T22:58:52+08:00][sql] SELECT COUNT(*) AS think_count FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 LIMIT 1 [ RunTime:0.000273s ]
+[2026-01-16T22:58:52+08:00][sql] SELECT SUM(`amount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 LIMIT 1 [ RunTime:0.000200s ]
+[2026-01-16T22:58:52+08:00][sql] SELECT SUM(`okamount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 LIMIT 1 [ RunTime:0.001534s ]
+[2026-01-16T22:58:53+08:00][sql] CONNECT:[ UseTime:0.000796s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:53+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_touzhu` [ RunTime:0.001533s ]
+[2026-01-16T22:58:53+08:00][sql] SELECT * FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = -1 ORDER BY `id` DESC LIMIT 0,20 [ RunTime:0.000733s ]
+[2026-01-16T22:58:53+08:00][sql] SELECT COUNT(*) AS think_count FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = -1 LIMIT 1 [ RunTime:0.000439s ]
+[2026-01-16T22:58:53+08:00][sql] SELECT SUM(`amount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 LIMIT 1 [ RunTime:0.000474s ]
+[2026-01-16T22:58:53+08:00][sql] SELECT SUM(`okamount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 LIMIT 1 [ RunTime:0.001570s ]
+[2026-01-16T22:58:53+08:00][sql] CONNECT:[ UseTime:0.017902s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:53+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_touzhu` [ RunTime:0.001035s ]
+[2026-01-16T22:58:53+08:00][sql] SELECT * FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = -1 ORDER BY `id` DESC LIMIT 0,20 [ RunTime:0.000413s ]
+[2026-01-16T22:58:53+08:00][sql] SELECT COUNT(*) AS think_count FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = -1 LIMIT 1 [ RunTime:0.000572s ]
+[2026-01-16T22:58:53+08:00][sql] SELECT SUM(`amount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 LIMIT 1 [ RunTime:0.000530s ]
+[2026-01-16T22:58:53+08:00][sql] SELECT SUM(`okamount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 LIMIT 1 [ RunTime:0.002909s ]
+[2026-01-16T22:58:54+08:00][sql] CONNECT:[ UseTime:0.025544s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:54+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_touzhu` [ RunTime:0.000994s ]
+[2026-01-16T22:58:54+08:00][sql] SELECT * FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 ORDER BY `id` DESC LIMIT 0,20 [ RunTime:0.002802s ]
+[2026-01-16T22:58:54+08:00][sql] SELECT COUNT(*) AS think_count FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 LIMIT 1 [ RunTime:0.003958s ]
+[2026-01-16T22:58:54+08:00][sql] SELECT SUM(`amount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 LIMIT 1 [ RunTime:0.000652s ]
+[2026-01-16T22:58:54+08:00][sql] SELECT SUM(`okamount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 LIMIT 1 [ RunTime:0.003630s ]
+[2026-01-16T22:58:54+08:00][sql] CONNECT:[ UseTime:0.000644s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:54+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_touzhu` [ RunTime:0.001216s ]
+[2026-01-16T22:58:54+08:00][sql] SELECT * FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 ORDER BY `id` DESC LIMIT 0,20 [ RunTime:0.001967s ]
+[2026-01-16T22:58:54+08:00][sql] SELECT COUNT(*) AS think_count FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 LIMIT 1 [ RunTime:0.002114s ]
+[2026-01-16T22:58:54+08:00][sql] SELECT SUM(`amount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 LIMIT 1 [ RunTime:0.000355s ]
+[2026-01-16T22:58:54+08:00][sql] SELECT SUM(`okamount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 LIMIT 1 [ RunTime:0.001596s ]
+[2026-01-16T22:58:55+08:00][sql] CONNECT:[ UseTime:0.000672s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:55+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_touzhu` [ RunTime:0.001208s ]
+[2026-01-16T22:58:55+08:00][sql] SELECT * FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 0 ORDER BY `id` DESC LIMIT 0,20 [ RunTime:0.001260s ]
+[2026-01-16T22:58:55+08:00][sql] SELECT COUNT(*) AS think_count FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 0 LIMIT 1 [ RunTime:0.000853s ]
+[2026-01-16T22:58:55+08:00][sql] SELECT SUM(`amount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 LIMIT 1 [ RunTime:0.000401s ]
+[2026-01-16T22:58:55+08:00][sql] SELECT SUM(`okamount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 LIMIT 1 [ RunTime:0.001760s ]
+[2026-01-16T22:58:55+08:00][sql] CONNECT:[ UseTime:0.002020s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:55+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_touzhu` [ RunTime:0.001110s ]
+[2026-01-16T22:58:55+08:00][sql] SELECT * FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 0 ORDER BY `id` DESC LIMIT 0,20 [ RunTime:0.000793s ]
+[2026-01-16T22:58:55+08:00][sql] SELECT COUNT(*) AS think_count FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 0 LIMIT 1 [ RunTime:0.000712s ]
+[2026-01-16T22:58:55+08:00][sql] SELECT SUM(`amount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 LIMIT 1 [ RunTime:0.000333s ]
+[2026-01-16T22:58:55+08:00][sql] SELECT SUM(`okamount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 LIMIT 1 [ RunTime:0.001506s ]
+[2026-01-16T22:58:55+08:00][sql] CONNECT:[ UseTime:0.000771s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:55+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_touzhu` [ RunTime:0.001525s ]
+[2026-01-16T22:58:55+08:00][sql] SELECT * FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 ORDER BY `id` DESC LIMIT 0,20 [ RunTime:0.002576s ]
+[2026-01-16T22:58:55+08:00][sql] SELECT COUNT(*) AS think_count FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 LIMIT 1 [ RunTime:0.003743s ]
+[2026-01-16T22:58:55+08:00][sql] SELECT SUM(`amount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 LIMIT 1 [ RunTime:0.000722s ]
+[2026-01-16T22:58:55+08:00][sql] SELECT SUM(`okamount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 LIMIT 1 [ RunTime:0.004021s ]
+[2026-01-16T22:58:55+08:00][sql] CONNECT:[ UseTime:0.000776s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:55+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_touzhu` [ RunTime:0.001304s ]
+[2026-01-16T22:58:55+08:00][sql] SELECT * FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 ORDER BY `id` DESC LIMIT 0,20 [ RunTime:0.002034s ]
+[2026-01-16T22:58:55+08:00][sql] SELECT COUNT(*) AS think_count FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 LIMIT 1 [ RunTime:0.002012s ]
+[2026-01-16T22:58:55+08:00][sql] SELECT SUM(`amount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 LIMIT 1 [ RunTime:0.000390s ]
+[2026-01-16T22:58:55+08:00][sql] SELECT SUM(`okamount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 LIMIT 1 [ RunTime:0.001568s ]
+[2026-01-16T22:58:56+08:00][sql] CONNECT:[ UseTime:0.000937s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:56+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_touzhu` [ RunTime:0.001219s ]
+[2026-01-16T22:58:56+08:00][sql] SELECT * FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = -1 ORDER BY `id` DESC LIMIT 0,20 [ RunTime:0.000334s ]
+[2026-01-16T22:58:56+08:00][sql] SELECT COUNT(*) AS think_count FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = -1 LIMIT 1 [ RunTime:0.000226s ]
+[2026-01-16T22:58:56+08:00][sql] SELECT SUM(`amount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 LIMIT 1 [ RunTime:0.000213s ]
+[2026-01-16T22:58:56+08:00][sql] SELECT SUM(`okamount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 LIMIT 1 [ RunTime:0.002012s ]
+[2026-01-16T22:58:56+08:00][sql] CONNECT:[ UseTime:0.020461s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:56+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_touzhu` [ RunTime:0.002146s ]
+[2026-01-16T22:58:56+08:00][sql] SELECT * FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = -1 ORDER BY `id` DESC LIMIT 0,20 [ RunTime:0.000378s ]
+[2026-01-16T22:58:56+08:00][sql] SELECT COUNT(*) AS think_count FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = -1 LIMIT 1 [ RunTime:0.000258s ]
+[2026-01-16T22:58:56+08:00][sql] SELECT SUM(`amount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 LIMIT 1 [ RunTime:0.000235s ]
+[2026-01-16T22:58:56+08:00][sql] SELECT SUM(`okamount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 LIMIT 1 [ RunTime:0.004233s ]
+[2026-01-16T22:58:58+08:00][sql] CONNECT:[ UseTime:0.000769s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:58+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_touzhu` [ RunTime:0.001509s ]
+[2026-01-16T22:58:58+08:00][sql] SELECT * FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 ORDER BY `id` DESC LIMIT 0,20 [ RunTime:0.000579s ]
+[2026-01-16T22:58:58+08:00][sql] SELECT COUNT(*) AS think_count FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 LIMIT 1 [ RunTime:0.000688s ]
+[2026-01-16T22:58:58+08:00][sql] SELECT SUM(`amount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 LIMIT 1 [ RunTime:0.000395s ]
+[2026-01-16T22:58:58+08:00][sql] SELECT SUM(`okamount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 LIMIT 1 [ RunTime:0.002107s ]
+[2026-01-16T22:58:58+08:00][sql] CONNECT:[ UseTime:0.016558s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:58+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_touzhu` [ RunTime:0.001100s ]
+[2026-01-16T22:58:58+08:00][sql] SELECT * FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 ORDER BY `id` DESC LIMIT 0,20 [ RunTime:0.000416s ]
+[2026-01-16T22:58:58+08:00][sql] SELECT COUNT(*) AS think_count FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 LIMIT 1 [ RunTime:0.000295s ]
+[2026-01-16T22:58:58+08:00][sql] SELECT SUM(`amount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 LIMIT 1 [ RunTime:0.000195s ]
+[2026-01-16T22:58:58+08:00][sql] SELECT SUM(`okamount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 LIMIT 1 [ RunTime:0.001792s ]
+[2026-01-16T22:58:59+08:00][sql] CONNECT:[ UseTime:0.000815s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:59+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_member` [ RunTime:0.001336s ]
+[2026-01-16T22:58:59+08:00][sql] SELECT * FROM `caipiao_member` WHERE  `id` = 1 LIMIT 1 [ RunTime:0.000503s ]
+[2026-01-16T22:58:59+08:00][sql] CONNECT:[ UseTime:0.024609s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:58:59+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_setting` [ RunTime:0.002256s ]
+[2026-01-16T22:58:59+08:00][sql] SELECT `value`,`name` FROM `caipiao_setting` WHERE  `name` IN ('webtitle','weblogo','keywords','description','copyright','icp','serviceqq','servicecode') [ RunTime:0.000716s ]
+[2026-01-16T22:59:03+08:00][sql] CONNECT:[ UseTime:0.000699s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:59:03+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_touzhu` [ RunTime:0.001047s ]
+[2026-01-16T22:59:03+08:00][sql] SELECT * FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 ORDER BY `id` DESC LIMIT 0,10 [ RunTime:0.000384s ]
+[2026-01-16T22:59:03+08:00][sql] SELECT COUNT(*) AS think_count FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 LIMIT 1 [ RunTime:0.000268s ]
+[2026-01-16T22:59:03+08:00][sql] SELECT SUM(`amount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800 LIMIT 1 [ RunTime:0.000202s ]
+[2026-01-16T22:59:03+08:00][sql] SELECT SUM(`okamount`) AS think_sum FROM `caipiao_touzhu` WHERE  `uid` = 1  AND `oddtime` >= 1768492800  AND `isdraw` = 1 LIMIT 1 [ RunTime:0.001403s ]
+[2026-01-16T22:59:05+08:00][sql] CONNECT:[ UseTime:0.000674s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:59:05+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_member` [ RunTime:0.001644s ]
+[2026-01-16T22:59:05+08:00][sql] SELECT * FROM `caipiao_member` WHERE  `id` = 1 LIMIT 1 [ RunTime:0.000430s ]
+[2026-01-16T22:59:05+08:00][sql] CONNECT:[ UseTime:0.000618s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:59:05+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_setting` [ RunTime:0.000933s ]
+[2026-01-16T22:59:05+08:00][sql] SELECT `value`,`name` FROM `caipiao_setting` WHERE  `name` IN ('webtitle','weblogo','keywords','description','copyright','icp','serviceqq','servicecode') [ RunTime:0.000331s ]
+[2026-01-16T22:59:05+08:00][sql] CONNECT:[ UseTime:0.012695s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:59:05+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_fuddetail` [ RunTime:0.001150s ]
+[2026-01-16T22:59:05+08:00][sql] SELECT * FROM `caipiao_fuddetail` WHERE  `uid` = 1  AND `oddtime` >= 1767888000 ORDER BY `id` DESC LIMIT 0,10 [ RunTime:0.002992s ]
+[2026-01-16T22:59:05+08:00][sql] SELECT COUNT(*) AS think_count FROM `caipiao_fuddetail` WHERE  `uid` = 1  AND `oddtime` >= 1767888000 LIMIT 1 [ RunTime:0.000712s ]
+[2026-01-16T22:59:06+08:00][sql] CONNECT:[ UseTime:0.020259s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:59:06+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_member` [ RunTime:0.003169s ]
+[2026-01-16T22:59:06+08:00][sql] SELECT * FROM `caipiao_member` WHERE  `id` = 1 LIMIT 1 [ RunTime:0.000729s ]
+[2026-01-16T22:59:06+08:00][sql] CONNECT:[ UseTime:0.000775s ] mysql:host=127.0.0.1;port=3307;dbname=xdmd;charset=utf8mb4
+[2026-01-16T22:59:06+08:00][sql] SHOW FULL COLUMNS FROM `caipiao_setting` [ RunTime:0.001991s ]
+[2026-01-16T22:59:06+08:00][sql] SELECT `value`,`name` FROM `caipiao_setting` WHERE  `name` IN ('webtitle','weblogo','keywords','description','copyright','icp','serviceqq','servicecode') [ RunTime:0.000675s ]

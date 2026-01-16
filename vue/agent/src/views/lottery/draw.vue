@@ -121,8 +121,9 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import { getDrawList } from '@/api/lottery'
 
 const loading = ref(false)
 
@@ -135,76 +136,66 @@ const searchForm = reactive({
 const pagination = reactive({
   page: 1,
   size: 10,
-  total: 200
+  total: 0
 })
 
-const tableData = ref([
-  {
-    id: 1,
-    lotteryCode: 'CQSSC',
-    lotteryName: '重庆时时彩',
-    lotteryType: 'ssc',
-    color: '#ff6b6b',
-    issue: '20240320072',
-    drawNumber: '3,5,8,1,9',
-    betCount: 156,
-    betAmount: '23,560.00',
-    winAmount: '18,900.00',
-    drawTime: '2024-03-20 18:20:00'
-  },
-  {
-    id: 2,
-    lotteryCode: 'XJSSC',
-    lotteryName: '新疆时时彩',
-    lotteryType: 'ssc',
-    color: '#4ecdc4',
-    issue: '20240320071',
-    drawNumber: '1,4,6,2,8',
-    betCount: 98,
-    betAmount: '15,680.00',
-    winAmount: '12,340.00',
-    drawTime: '2024-03-20 18:10:00'
-  },
-  {
-    id: 3,
-    lotteryCode: 'PK10',
-    lotteryName: '北京赛车PK10',
-    lotteryType: 'pk10',
-    color: '#f9ca24',
-    issue: '20240320144',
-    drawNumber: '03,07,01,10,05,02,09,04,08,06',
-    betCount: 234,
-    betAmount: '35,890.00',
-    winAmount: '28,760.00',
-    drawTime: '2024-03-20 18:05:00'
-  },
-  {
-    id: 4,
-    lotteryCode: 'K3',
-    lotteryName: '快3',
-    lotteryType: 'k3',
-    color: '#6c5ce7',
-    issue: '20240320240',
-    drawNumber: '3,4,6',
-    betCount: 178,
-    betAmount: '28,450.00',
-    winAmount: '22,130.00',
-    drawTime: '2024-03-20 18:00:00'
-  },
-  {
-    id: 5,
-    lotteryCode: '11X5',
-    lotteryName: '11选5',
-    lotteryType: '11x5',
-    color: '#00b894',
-    issue: '20240320072',
-    drawNumber: '01,03,05,08,11',
-    betCount: 145,
-    betAmount: '21,670.00',
-    winAmount: '17,890.00',
-    drawTime: '2024-03-20 17:50:00'
+const tableData = ref([])
+
+// 获取开奖记录
+const fetchData = async () => {
+  loading.value = true
+  try {
+    const data = await getDrawList({
+      lotteryName: searchForm.lotteryId,
+      issue: searchForm.issue,
+      startDate: searchForm.date || '',
+      endDate: searchForm.date || '',
+      page: pagination.page,
+      pageSize: pagination.size
+    })
+
+    tableData.value = (data.list || []).map(item => ({
+      id: item.id,
+      lotteryCode: item.cpname,
+      lotteryName: item.cptitle || item.title,
+      lotteryType: getLotteryType(item.cpname),
+      color: getColorByName(item.cpname),
+      issue: item.expect,
+      drawNumber: item.opencode,
+      drawTime: item.opentime ? new Date(item.opentime * 1000).toLocaleString('zh-CN') : '-',
+      betCount: 0,
+      betAmount: '0.00',
+      winAmount: '0.00'
+    }))
+    
+    pagination.total = data.total || 0
+  } catch (error) {
+    console.error('获取开奖记录失败:', error)
+    ElMessage.error(error.message || '获取数据失败')
+  } finally {
+    loading.value = false
   }
-])
+}
+
+const getLotteryType = (cpname) => {
+  if (cpname.includes('ssc')) return 'ssc'
+  if (cpname.includes('pk10')) return 'pk10'
+  if (cpname.includes('k3')) return 'k3'
+  if (cpname.includes('x5')) return '11x5'
+  return 'ssc'
+}
+
+const getColorByName = (cpname) => {
+  const colors = {
+    'cqssc': '#ff6b6b',
+    'xjssc': '#4ecdc4',
+    'tjssc': '#f9ca24',
+    'bjpk10': '#6c5ce7',
+    'k3': '#00b894',
+    'x5': '#45b7d1'
+  }
+  return colors[cpname] || '#409eff'
+}
 
 const getBallColor = (type, num) => {
   const colors = {
@@ -221,11 +212,8 @@ const getBallColor = (type, num) => {
 }
 
 const handleSearch = () => {
-  loading.value = true
-  setTimeout(() => {
-    loading.value = false
-    ElMessage.success('查询成功')
-  }, 500)
+  pagination.page = 1
+  fetchData()
 }
 
 const handleReset = () => {
@@ -236,7 +224,7 @@ const handleReset = () => {
 }
 
 const handleExport = () => {
-  ElMessage.success('导出功能开发中...')
+  ElMessage.info('导出功能开发中...')
 }
 
 const handleDetail = (row) => {
@@ -244,12 +232,16 @@ const handleDetail = (row) => {
 }
 
 const handleSizeChange = () => {
-  handleSearch()
+  fetchData()
 }
 
 const handleCurrentChange = () => {
-  handleSearch()
+  fetchData()
 }
+
+onMounted(() => {
+  fetchData()
+})
 </script>
 
 <style lang="scss" scoped>

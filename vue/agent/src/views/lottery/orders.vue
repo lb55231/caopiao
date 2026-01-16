@@ -168,8 +168,9 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { getOrderList } from '@/api/lottery'
 
 const loading = ref(false)
 
@@ -184,105 +185,94 @@ const searchForm = reactive({
 const pagination = reactive({
   page: 1,
   size: 10,
-  total: 500
+  total: 0
 })
 
 const statistics = ref({
-  totalBet: '156,890.50',
-  totalWin: '128,560.00',
-  totalOrders: 1568,
-  totalUsers: 256
+  totalBet: '0.00',
+  totalWin: '0.00',
+  totalOrders: 0,
+  totalUsers: 0
 })
 
-const tableData = ref([
-  {
-    id: 1,
-    orderNo: 'BET202403201234567890',
-    username: 'user001',
-    lotteryName: '重庆时时彩',
-    issue: '20240320072',
-    playName: '五星直选',
-    betContent: '12345',
-    betAmount: '100.00',
-    winAmount: '0.00',
-    status: 1,
-    statusName: '未中奖',
-    betTime: '2024-03-20 18:15:30'
-  },
-  {
-    id: 2,
-    orderNo: 'BET202403201234567891',
-    username: 'user002',
-    lotteryName: '新疆时时彩',
-    issue: '20240320071',
-    playName: '三星组选',
-    betContent: '168',
-    betAmount: '50.00',
-    winAmount: '320.00',
-    status: 2,
-    statusName: '已中奖',
-    betTime: '2024-03-20 18:05:15'
-  },
-  {
-    id: 3,
-    orderNo: 'BET202403201234567892',
-    username: 'user003',
-    lotteryName: 'PK10',
-    issue: '20240320144',
-    playName: '冠军',
-    betContent: '3号车',
-    betAmount: '200.00',
-    winAmount: '0.00',
-    status: 0,
-    statusName: '待开奖',
-    betTime: '2024-03-20 18:00:20'
-  },
-  {
-    id: 4,
-    orderNo: 'BET202403201234567893',
-    username: 'user004',
-    lotteryName: '快3',
-    issue: '20240320240',
-    playName: '三同号',
-    betContent: '111',
-    betAmount: '30.00',
-    winAmount: '0.00',
-    status: 1,
-    statusName: '未中奖',
-    betTime: '2024-03-20 17:58:45'
-  },
-  {
-    id: 5,
-    orderNo: 'BET202403201234567894',
-    username: 'user005',
-    lotteryName: '11选5',
-    issue: '20240320072',
-    playName: '任选五',
-    betContent: '01,03,05,08,11',
-    betAmount: '80.00',
-    winAmount: '560.00',
-    status: 2,
-    statusName: '已中奖',
-    betTime: '2024-03-20 17:45:30'
+const tableData = ref([])
+
+// 获取注单记录
+const fetchData = async () => {
+  loading.value = true
+  try {
+    const data = await getOrderList({
+      lotteryName: searchForm.lotteryId,
+      username: searchForm.username,
+      issue: '',
+      orderNo: searchForm.orderNo,
+      status: searchForm.status,
+      sDate: searchForm.dateRange && searchForm.dateRange[0] ? searchForm.dateRange[0].split(' ')[0] : '',
+      eDate: searchForm.dateRange && searchForm.dateRange[1] ? searchForm.dateRange[1].split(' ')[0] : '',
+      page: pagination.page,
+      pageSize: pagination.size
+    })
+
+    tableData.value = (data.list || []).map(item => ({
+      id: item.id,
+      orderNo: item.trano || '-',
+      username: item.username,
+      lotteryName: item.cptitle || item.cpname,
+      issue: item.expect,
+      playName: item.playtitle || '-',
+      betContent: item.tzcode || '-',
+      betAmount: parseFloat(item.amount || 0).toFixed(2),
+      winAmount: parseFloat(item.okamount || 0).toFixed(2),
+      status: item.isdraw,
+      statusName: getStatusName(item.isdraw),
+      betTime: item.oddtime ? new Date(item.oddtime * 1000).toLocaleString('zh-CN') : '-',
+      drawNumber: item.opencode || '-'
+    }))
+    
+    pagination.total = data.total || 0
+
+    // 更新统计信息
+    if (data.stats) {
+      statistics.value = {
+        totalBet: parseFloat(data.stats.total_amount || 0).toFixed(2),
+        totalWin: parseFloat(data.stats.total_award || 0).toFixed(2),
+        totalOrders: data.stats.total_count || 0,
+        totalUsers: data.stats.win_count || 0
+      }
+    }
+  } catch (error) {
+    console.error('获取注单记录失败:', error)
+    ElMessage.error(error.message || '获取数据失败')
+  } finally {
+    loading.value = false
   }
-])
+}
+
+const getStatusName = (status) => {
+  const names = {
+    0: '待开奖',
+    1: '已中奖',
+    2: '未中奖'
+  }
+  return names[status] || '未知'
+}
 
 const getStatusTag = (status) => {
   const tags = {
     0: 'warning',
-    1: 'info',
-    2: 'success',
+    1: 'success',
+    2: 'info',
     3: 'danger'
   }
   return tags[status] || ''
 }
 
+// Delete old fake data
+
+
 const handleSearch = () => {
-  loading.value = true
-  setTimeout(() => {
-    loading.value = false
-    ElMessage.success('查询成功')
-  }, 500)
+  pagination.page = 1
+  fetchData()
 }
 
 const handleReset = () => {
@@ -295,7 +285,7 @@ const handleReset = () => {
 }
 
 const handleExport = () => {
-  ElMessage.success('导出功能开发中...')
+  ElMessage.info('导出功能开发中...')
 }
 
 const handleDetail = (row) => {
@@ -313,12 +303,16 @@ const handleCancel = (row) => {
 }
 
 const handleSizeChange = () => {
-  handleSearch()
+  fetchData()
 }
 
 const handleCurrentChange = () => {
-  handleSearch()
+  fetchData()
 }
+
+onMounted(() => {
+  fetchData()
+})
 </script>
 
 <style lang="scss" scoped>

@@ -130,8 +130,9 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { getWithdrawList } from '@/api/finance'
 
 const loading = ref(false)
 
@@ -144,63 +145,10 @@ const searchForm = reactive({
 const pagination = reactive({
   page: 1,
   size: 10,
-  total: 30
+  total: 0
 })
 
-const tableData = ref([
-  {
-    id: 1,
-    orderNo: 'WD202403201234567890',
-    amount: '10,000.00',
-    fee: '50.00',
-    actualAmount: '9,950.00',
-    bankName: '中国工商银行',
-    bankAccount: '6222 **** **** 1234',
-    status: 3,
-    statusName: '已完成',
-    createTime: '2024-03-20 10:25:30',
-    auditTime: '2024-03-20 10:30:25'
-  },
-  {
-    id: 2,
-    orderNo: 'WD202403201234567891',
-    amount: '5,000.00',
-    fee: '25.00',
-    actualAmount: '4,975.00',
-    bankName: '中国建设银行',
-    bankAccount: '6217 **** **** 5678',
-    status: 0,
-    statusName: '审核中',
-    createTime: '2024-03-20 14:00:15',
-    auditTime: null
-  },
-  {
-    id: 3,
-    orderNo: 'WD202403201234567892',
-    amount: '8,000.00',
-    fee: '40.00',
-    actualAmount: '7,960.00',
-    bankName: '中国农业银行',
-    bankAccount: '6228 **** **** 9012',
-    status: 1,
-    statusName: '已通过',
-    createTime: '2024-03-20 15:20:40',
-    auditTime: '2024-03-20 15:25:50'
-  },
-  {
-    id: 4,
-    orderNo: 'WD202403201234567893',
-    amount: '3,000.00',
-    fee: '15.00',
-    actualAmount: '2,985.00',
-    bankName: '中国银行',
-    bankAccount: '6216 **** **** 3456',
-    status: 2,
-    statusName: '已拒绝',
-    createTime: '2024-03-20 16:10:20',
-    auditTime: '2024-03-20 16:15:30'
-  }
-])
+const tableData = ref([])
 
 const getStatusTag = (status) => {
   const tags = {
@@ -212,12 +160,51 @@ const getStatusTag = (status) => {
   return tags[status] || ''
 }
 
-const handleSearch = () => {
+const getStatusName = (status) => {
+  const names = {
+    0: '审核中',
+    1: '已通过',
+    2: '已拒绝'
+  }
+  return names[status] || '未知'
+}
+
+// 获取提现记录
+const fetchData = async () => {
   loading.value = true
-  setTimeout(() => {
+  try {
+    const data = await getWithdrawList({
+      page: pagination.page,
+      pageSize: pagination.size,
+      state: searchForm.status
+    })
+
+    tableData.value = (data.list || []).map(item => ({
+      id: item.id,
+      orderNo: item.trano || '-',
+      amount: parseFloat(item.amount || 0).toFixed(2),
+      fee: parseFloat(item.poundage || 0).toFixed(2),
+      actualAmount: parseFloat(item.actualmoney || 0).toFixed(2),
+      bankName: item.banktitle || '-',
+      bankAccount: item.bankcard || '-',
+      status: item.state,
+      statusName: getStatusName(item.state),
+      createTime: item.oddtime ? new Date(item.oddtime * 1000).toLocaleString('zh-CN') : '-',
+      auditTime: item.state != 0 ? new Date(item.oddtime * 1000).toLocaleString('zh-CN') : null
+    }))
+    
+    pagination.total = data.total || 0
+  } catch (error) {
+    console.error('获取提现记录失败:', error)
+    ElMessage.error(error.message || '获取数据失败')
+  } finally {
     loading.value = false
-    ElMessage.success('查询成功')
-  }, 500)
+  }
+}
+
+const handleSearch = () => {
+  pagination.page = 1
+  fetchData()
 }
 
 const handleReset = () => {
@@ -246,12 +233,16 @@ const handleDetail = (row) => {
 }
 
 const handleSizeChange = () => {
-  handleSearch()
+  fetchData()
 }
 
 const handleCurrentChange = () => {
-  handleSearch()
+  fetchData()
 }
+
+onMounted(() => {
+  fetchData()
+})
 </script>
 
 <style lang="scss" scoped>

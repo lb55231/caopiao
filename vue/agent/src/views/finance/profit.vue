@@ -157,16 +157,17 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import { getProfitList } from '@/api/finance'
 
 const loading = ref(false)
 
 const stats = ref({
-  todayProfit: '3,280.50',
-  weekProfit: '18,560.00',
-  monthProfit: '56,890.00',
-  totalProfit: '235,680.00'
+  todayProfit: '0.00',
+  weekProfit: '0.00',
+  monthProfit: '0.00',
+  totalProfit: '0.00'
 })
 
 const searchForm = reactive({
@@ -176,66 +177,10 @@ const searchForm = reactive({
 const pagination = reactive({
   page: 1,
   size: 10,
-  total: 90
+  total: 0
 })
 
-const tableData = ref([
-  {
-    date: '2024-03-20',
-    rechargeAmount: '50,000.00',
-    withdrawAmount: '20,000.00',
-    betAmount: '35,000.00',
-    winAmount: '28,000.00',
-    commission: '2,800.00',
-    rebate: '1,500.00',
-    profit: '4,300.00',
-    userCount: 85
-  },
-  {
-    date: '2024-03-19',
-    rechargeAmount: '45,000.00',
-    withdrawAmount: '18,000.00',
-    betAmount: '32,000.00',
-    winAmount: '25,000.00',
-    commission: '2,500.00',
-    rebate: '1,350.00',
-    profit: '3,850.00',
-    userCount: 78
-  },
-  {
-    date: '2024-03-18',
-    rechargeAmount: '48,000.00',
-    withdrawAmount: '22,000.00',
-    betAmount: '38,000.00',
-    winAmount: '30,000.00',
-    commission: '3,000.00',
-    rebate: '1,600.00',
-    profit: '4,600.00',
-    userCount: 92
-  },
-  {
-    date: '2024-03-17',
-    rechargeAmount: '42,000.00',
-    withdrawAmount: '15,000.00',
-    betAmount: '30,000.00',
-    winAmount: '24,000.00',
-    commission: '2,400.00',
-    rebate: '1,250.00',
-    profit: '3,650.00',
-    userCount: 72
-  },
-  {
-    date: '2024-03-16',
-    rechargeAmount: '38,000.00',
-    withdrawAmount: '16,000.00',
-    betAmount: '28,000.00',
-    winAmount: '22,000.00',
-    commission: '2,200.00',
-    rebate: '1,100.00',
-    profit: '3,300.00',
-    userCount: 68
-  }
-])
+const tableData = ref([])
 
 const getSummaries = (param) => {
   const { columns, data } = param
@@ -269,12 +214,52 @@ const getSummaries = (param) => {
   return sums
 }
 
-const handleSearch = () => {
+// 获取收益报表数据
+const fetchData = async () => {
   loading.value = true
-  setTimeout(() => {
+  try {
+    const startTime = searchForm.dateRange && searchForm.dateRange[0] 
+      ? new Date(searchForm.dateRange[0]).getTime() / 1000 
+      : 0
+    const endTime = searchForm.dateRange && searchForm.dateRange[1] 
+      ? new Date(searchForm.dateRange[1] + ' 23:59:59').getTime() / 1000 
+      : 0
+
+    const data = await getProfitList({
+      page: pagination.page,
+      pageSize: pagination.size,
+      startTime: startTime,
+      endTime: endTime
+    })
+
+    tableData.value = (data.list || []).map(item => ({
+      date: item.oddtime ? new Date(item.oddtime * 1000).toLocaleDateString('zh-CN') : '-',
+      typeName: item.typename || item.type,
+      amount: parseFloat(item.amount || 0).toFixed(2),
+      remark: item.remark || '-',
+      // 以下字段为显示需要，实际以 amount 为准
+      rechargeAmount: '0.00',
+      withdrawAmount: '0.00',
+      betAmount: '0.00',
+      winAmount: '0.00',
+      commission: item.type === 'commission' ? parseFloat(item.amount || 0).toFixed(2) : '0.00',
+      rebate: item.type === 'rebate' || item.type === 'fandian' ? parseFloat(item.amount || 0).toFixed(2) : '0.00',
+      profit: parseFloat(item.amount || 0).toFixed(2),
+      userCount: 0
+    }))
+    
+    pagination.total = data.total || 0
+  } catch (error) {
+    console.error('获取收益报表失败:', error)
+    ElMessage.error(error.message || '获取数据失败')
+  } finally {
     loading.value = false
-    ElMessage.success('查询成功')
-  }, 500)
+  }
+}
+
+const handleSearch = () => {
+  pagination.page = 1
+  fetchData()
 }
 
 const handleReset = () => {
@@ -283,7 +268,7 @@ const handleReset = () => {
 }
 
 const handleExport = () => {
-  ElMessage.success('导出功能开发中...')
+  ElMessage.info('导出功能开发中...')
 }
 
 const handleDetail = (row) => {
@@ -291,12 +276,16 @@ const handleDetail = (row) => {
 }
 
 const handleSizeChange = () => {
-  handleSearch()
+  fetchData()
 }
 
 const handleCurrentChange = () => {
-  handleSearch()
+  fetchData()
 }
+
+onMounted(() => {
+  fetchData()
+})
 </script>
 
 <style lang="scss" scoped>

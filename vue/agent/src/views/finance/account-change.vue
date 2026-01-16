@@ -95,8 +95,9 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import { getAccountChangeList } from '@/api/finance'
 
 const loading = ref(false)
 
@@ -108,66 +109,10 @@ const searchForm = reactive({
 const pagination = reactive({
   page: 1,
   size: 10,
-  total: 100
+  total: 0
 })
 
-const tableData = ref([
-  {
-    id: 1,
-    orderNo: 'AC202403201234567890',
-    type: 1,
-    typeName: '充值',
-    amount: 10000.00,
-    beforeBalance: 5000.00,
-    afterBalance: 15000.00,
-    remark: '银行卡充值',
-    createTime: '2024-03-20 14:25:30'
-  },
-  {
-    id: 2,
-    orderNo: 'AC202403201234567891',
-    type: 2,
-    typeName: '提现',
-    amount: -2000.00,
-    beforeBalance: 15000.00,
-    afterBalance: 13000.00,
-    remark: '提现到银行卡',
-    createTime: '2024-03-20 15:30:20'
-  },
-  {
-    id: 3,
-    orderNo: 'AC202403201234567892',
-    type: 3,
-    typeName: '返佣',
-    amount: 500.00,
-    beforeBalance: 13000.00,
-    afterBalance: 13500.00,
-    remark: '下级用户投注返佣',
-    createTime: '2024-03-20 16:00:15'
-  },
-  {
-    id: 4,
-    orderNo: 'AC202403201234567893',
-    type: 4,
-    typeName: '返点',
-    amount: 300.00,
-    beforeBalance: 13500.00,
-    afterBalance: 13800.00,
-    remark: '平台返点',
-    createTime: '2024-03-20 17:20:45'
-  },
-  {
-    id: 5,
-    orderNo: 'AC202403201234567894',
-    type: 5,
-    typeName: '消费',
-    amount: -800.00,
-    beforeBalance: 13800.00,
-    afterBalance: 13000.00,
-    remark: '投注消费',
-    createTime: '2024-03-20 18:15:30'
-  }
-])
+const tableData = ref([])
 
 const getTypeTag = (type) => {
   const tags = {
@@ -180,12 +125,49 @@ const getTypeTag = (type) => {
   return tags[type] || ''
 }
 
-const handleSearch = () => {
+// 获取账变记录
+const fetchData = async () => {
   loading.value = true
-  setTimeout(() => {
+  try {
+    const startTime = searchForm.dateRange && searchForm.dateRange[0] 
+      ? new Date(searchForm.dateRange[0]).getTime() / 1000 
+      : 0
+    const endTime = searchForm.dateRange && searchForm.dateRange[1] 
+      ? new Date(searchForm.dateRange[1] + ' 23:59:59').getTime() / 1000 
+      : 0
+
+    const data = await getAccountChangeList({
+      page: pagination.page,
+      pageSize: pagination.size,
+      type: searchForm.type,
+      startTime: startTime,
+      endTime: endTime
+    })
+
+    tableData.value = (data.list || []).map(item => ({
+      id: item.id,
+      orderNo: item.trano || '-',
+      type: item.type,
+      typeName: item.typename || item.type,
+      amount: parseFloat(item.amount || 0),
+      beforeBalance: parseFloat(item.amountbefor || 0),
+      afterBalance: parseFloat(item.amountafter || 0),
+      remark: item.remark || '-',
+      createTime: item.oddtime ? new Date(item.oddtime * 1000).toLocaleString('zh-CN') : '-'
+    }))
+    
+    pagination.total = data.total || 0
+  } catch (error) {
+    console.error('获取账变记录失败:', error)
+    ElMessage.error(error.message || '获取数据失败')
+  } finally {
     loading.value = false
-    ElMessage.success('查询成功')
-  }, 500)
+  }
+}
+
+const handleSearch = () => {
+  pagination.page = 1
+  fetchData()
 }
 
 const handleReset = () => {
@@ -195,16 +177,20 @@ const handleReset = () => {
 }
 
 const handleExport = () => {
-  ElMessage.success('导出功能开发中...')
+  ElMessage.info('导出功能开发中...')
 }
 
 const handleSizeChange = () => {
-  handleSearch()
+  fetchData()
 }
 
 const handleCurrentChange = () => {
-  handleSearch()
+  fetchData()
 }
+
+onMounted(() => {
+  fetchData()
+})
 </script>
 
 <style lang="scss" scoped>

@@ -16,13 +16,6 @@
         <el-form-item label="活动标题">
           <el-input v-model="searchForm.title" placeholder="请输入活动标题" clearable />
         </el-form-item>
-        <el-form-item label="状态">
-          <el-select v-model="searchForm.status" placeholder="请选择状态" clearable>
-            <el-option label="全部" :value="-1" />
-            <el-option label="禁用" :value="0" />
-            <el-option label="启用" :value="1" />
-          </el-select>
-        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleSearch">搜索</el-button>
           <el-button @click="handleReset">重置</el-button>
@@ -33,14 +26,7 @@
       <el-table :data="tableData" style="width: 100%" v-loading="loading">
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="title" label="活动标题" min-width="200" />
-        <el-table-column prop="catid" label="分类ID" width="100" />
-        <el-table-column label="状态" width="100">
-          <template #default="{ row }">
-            <el-tag :type="row.status === 1 ? 'success' : 'danger'">
-              {{ row.status === 1 ? '启用' : '禁用' }}
-            </el-tag>
-          </template>
-        </el-table-column>
+        <el-table-column prop="catname" label="分类名称" width="120" />
         <el-table-column label="创建时间" width="180">
           <template #default="{ row }">
             {{ formatTime(row.oddtime) }}
@@ -77,7 +63,7 @@
     <el-dialog
       v-model="dialogVisible"
       :title="dialogTitle"
-      width="800px"
+      width="900px"
       @close="handleDialogClose"
     >
       <el-form
@@ -92,19 +78,11 @@
         <el-form-item label="分类ID" prop="catid">
           <el-input-number v-model="form.catid" :min="1" />
         </el-form-item>
-        <el-form-item label="活动内容" prop="content">
-          <el-input
-            v-model="form.content"
-            type="textarea"
-            :rows="10"
-            placeholder="请输入活动内容（支持HTML）"
-          />
+        <el-form-item label="分类名称" prop="catname">
+          <el-input v-model="form.catname" placeholder="请输入分类名称" />
         </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-radio-group v-model="form.status">
-            <el-radio :label="1">启用</el-radio>
-            <el-radio :label="0">禁用</el-radio>
-          </el-radio-group>
+        <el-form-item label="活动内容" prop="content">
+          <RichTextEditor v-model="form.content" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -122,11 +100,11 @@ import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Edit, Delete } from '@element-plus/icons-vue'
 import request from '@/utils/request'
+import RichTextEditor from '@/components/RichTextEditor.vue'
 
 // 搜索表单
 const searchForm = reactive({
-  title: '',
-  status: -1
+  title: ''
 })
 
 // 表格数据
@@ -152,7 +130,7 @@ const form = reactive({
   title: '',
   content: '',
   catid: 41,
-  status: 1
+  catname: '活动公告'
 })
 
 // 表单验证规则
@@ -174,18 +152,16 @@ const loadData = async () => {
   try {
     const params = {
       page: pagination.page,
-      pageSize: pagination.pageSize
-    }
-    
-    if (searchForm.status >= 0) {
-      params.status = searchForm.status
+      page_size: pagination.pageSize
     }
     
     const res = await request.get('/admin/activity/list', { params })
     
     if (res.code === 200) {
       tableData.value = res.data.list || []
-      pagination.total = res.data.pagination.total || 0
+      pagination.total = res.data.total || 0
+    } else {
+      ElMessage.error(res.msg || '加载失败')
     }
   } catch (error) {
     ElMessage.error('加载失败')
@@ -204,7 +180,6 @@ const handleSearch = () => {
 // 重置
 const handleReset = () => {
   searchForm.title = ''
-  searchForm.status = -1
   pagination.page = 1
   loadData()
 }
@@ -232,7 +207,7 @@ const handleEdit = (row) => {
   form.title = row.title
   form.content = row.content || ''
   form.catid = row.catid || 41
-  form.status = row.status
+  form.catname = row.catname || '活动公告'
   dialogVisible.value = true
 }
 
@@ -269,11 +244,11 @@ const handleSubmit = async () => {
     let res
     if (form.id) {
       // 编辑
-      res = await request.put(`/admin/activity/update?id=${form.id}`, {
+      res = await request.put(`/admin/activity/update/${form.id}`, {
         title: form.title,
         content: form.content,
         catid: form.catid,
-        status: form.status
+        catname: form.catname
       })
     } else {
       // 新增
@@ -281,7 +256,7 @@ const handleSubmit = async () => {
         title: form.title,
         content: form.content,
         catid: form.catid,
-        status: form.status
+        catname: form.catname
       })
     }
     
@@ -310,7 +285,7 @@ const resetForm = () => {
   form.title = ''
   form.content = ''
   form.catid = 41
-  form.status = 1
+  form.catname = '活动公告'
   formRef.value?.clearValidate()
 }
 

@@ -100,10 +100,11 @@ class SystemController extends AdminBaseController
             $pageSize = intval($this->request->param('page_size', 20));
             $offset = ($page - 1) * $pageSize;
 
-            $countStmt = $pdo->query("SELECT COUNT(*) as total FROM {$prefix}news WHERE catid = 41");
+            // 获取所有新闻/活动数据，不限制 catid
+            $countStmt = $pdo->query("SELECT COUNT(*) as total FROM {$prefix}news");
             $total = $countStmt->fetch(\PDO::FETCH_ASSOC)['total'];
 
-            $stmt = $pdo->query("SELECT * FROM {$prefix}news WHERE catid = 41 ORDER BY id DESC LIMIT {$offset}, {$pageSize}");
+            $stmt = $pdo->query("SELECT * FROM {$prefix}news ORDER BY id DESC LIMIT {$offset}, {$pageSize}");
             $list = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             return $this->success('获取成功', [
@@ -135,13 +136,14 @@ class SystemController extends AdminBaseController
             $pdo = $this->getDb();
             $prefix = $this->getPrefix();
 
-            $sql = "INSERT INTO {$prefix}news (title, content, catid, status, oddtime) VALUES (?, ?, ?, ?, ?)";
+            // news 表字段：id, catid, catname, title, content, oddtime
+            $sql = "INSERT INTO {$prefix}news (title, content, catid, catname, oddtime) VALUES (?, ?, ?, ?, ?)";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 $input['title'],
                 $input['content'],
                 $input['catid'] ?? 41,
-                $input['status'] ?? 1,
+                '活动公告', // catname 默认值
                 time()
             ]);
 
@@ -192,9 +194,9 @@ class SystemController extends AdminBaseController
                 $params[] = $input['catid'];
             }
 
-            if (isset($input['status'])) {
-                $updateFields[] = "status = ?";
-                $params[] = $input['status'];
+            if (isset($input['catname'])) {
+                $updateFields[] = "catname = ?";
+                $params[] = $input['catname'];
             }
 
             if (empty($updateFields)) {

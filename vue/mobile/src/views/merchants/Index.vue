@@ -8,7 +8,7 @@
       :border="false"
     />
 
-    <!-- 搜索栏 -->
+    <!-- 搜索栏 
     <div class="search-bar">
       <van-search
         v-model="searchKeyword"
@@ -16,9 +16,9 @@
         placeholder="搜索商家名称"
         @search="onSearch"
       />
-    </div>
+    </div>-->
 
-    <!-- 分类标签 -->
+    <!-- 分类标签
     <van-tabs
       v-model:active="activeCategory"
       sticky
@@ -30,7 +30,7 @@
       <van-tab title="时时彩" name="ssc"></van-tab>
       <van-tab title="11选5" name="11x5"></van-tab>
       <van-tab title="PK10" name="pk10"></van-tab>
-    </van-tabs>
+    </van-tabs> -->
 
     <!-- 商家列表 -->
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
@@ -92,7 +92,7 @@
                 color="#ff6034"
                 :disabled="!merchant.isopen"
               >
-                {{ merchant.isopen ? '立即下注' : '休息中' }}
+                {{ merchant.isopen ? '立即下单' : '休息中' }}
               </van-button>
             </div>
           </div>

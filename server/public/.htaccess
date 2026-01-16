@@ -3,9 +3,8 @@
   RewriteEngine On
 
   # 静态资源直接访问，不走框架路由
-  RewriteCond %{REQUEST_URI} ^/uploads/ [NC,OR]
-  RewriteCond %{REQUEST_URI} \.(jpg|jpeg|png|gif|webp|css|js|ico|svg|woff|woff2|ttf|eot)$ [NC]
-  RewriteRule ^(.*)$ - [L]
+  RewriteRule ^uploads/ - [L]
+  RewriteRule \.(jpg|jpeg|png|gif|webp|css|js|ico|svg|woff|woff2|ttf|eot)$ - [L]
 
   # 其他请求如果不是真实文件或目录，则转发到 index.php
   RewriteCond %{REQUEST_FILENAME} !-d

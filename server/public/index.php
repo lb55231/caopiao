@@ -10,9 +10,31 @@
 // +----------------------------------------------------------------------
 
 // [ 应用入口文件 ]
-namespace think;
 
-// ============ CORS 跨域处理 - 必须在框架启动前设置 ============
+// ============ 静态资源保护（PHP 内置服务器） ============
+// 如果请求的是静态文件且文件存在，直接返回
+$requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+if ($requestUri && preg_match('/\.(jpg|jpeg|png|gif|webp|css|js|ico|svg|woff|woff2|ttf|eot)$/i', $requestUri)) {
+    $filePath = __DIR__ . $requestUri;
+    if (file_exists($filePath) && is_file($filePath)) {
+        // 设置正确的 Content-Type
+        $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+        $mimeTypes = [
+            'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'png' => 'image/png',
+            'gif' => 'image/gif', 'webp' => 'image/webp', 'css' => 'text/css',
+            'js' => 'application/javascript', 'ico' => 'image/x-icon',
+            'svg' => 'image/svg+xml', 'woff' => 'font/woff', 'woff2' => 'font/woff2',
+            'ttf' => 'font/ttf', 'eot' => 'application/vnd.ms-fontobject'
+        ];
+        if (isset($mimeTypes[$ext])) {
+            header('Content-Type: ' . $mimeTypes[$ext]);
+        }
+        readfile($filePath);
+        exit;
+    }
+}
+
+// ============ CORS 跨域处理 ============
 // 获取请求来源
 $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '*';
 
@@ -30,10 +52,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 // ============ CORS 处理结束 ============
 
+// 引入自动加载文件
 require __DIR__ . '/../vendor/autoload.php';
 
 // 执行HTTP应用并响应
-$http = (new App())->http;
+$http = (new \think\App())->http;
 
 $response = $http->run();
 

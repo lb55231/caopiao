@@ -4,8 +4,7 @@
 // +----------------------------------------------------------------------
 
 return [
-    // 跨域请求支持 - 必须放在最前面
-    \app\common\middleware\AllowCrossDomain::class,
+    // 跨域已在 public/index.php 入口文件中统一处理
     // Token验证和用户ID注入
     \app\common\middleware\Auth::class,
     // 全局请求缓存

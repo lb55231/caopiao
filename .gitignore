@@ -5,6 +5,7 @@
 /vue/admin/dist
 /vue/admin/node_modules
 /mobile/node_modules
+/vue/mobile/dist
 /kaijiang.com
 /daili
 /server/runtime/api/log

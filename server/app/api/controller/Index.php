@@ -9,6 +9,23 @@ use think\facade\Request;
 class Index
 {
     /**
+     * 首页接口
+     */
+    public function index()
+    {
+        return json([
+            'code' => 200,
+            'msg' => 'success',
+            'data' => [
+                'message' => 'Welcome to Lottery API',
+                'version' => '1.0.0',
+                'time' => date('Y-m-d H:i:s'),
+                'server' => Request::host()
+            ]
+        ]);
+    }
+
+    /**
      * 测试接口
      */
     public function ping()

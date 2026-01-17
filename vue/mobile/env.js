@@ -15,9 +15,9 @@ const development = {
 // 生产环境配置
 const production = {
   // API基础路径 - 生产环境请修改为实际的域名
-  baseURL: 'https://your-domain.com/api',
+  baseURL: '/api',
   // 静态资源基础路径
-  resourceURL: 'https://your-domain.com',
+  resourceURL: '',
   // 超时时间
   timeout: 30000
 }

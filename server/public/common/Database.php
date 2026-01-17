@@ -10,27 +10,52 @@ class Database
     private static $config = null;
 
     /**
+     * 加载数据库配置（从主配置文件）
+     */
+    private static function loadConfig()
+    {
+        if (self::$config === null) {
+            // 引入主配置文件
+            $mainConfig = require __DIR__ . '/../../config/database.php';
+            $mysql = $mainConfig['connections']['mysql'];
+            
+            // 转换为当前类使用的格式
+            self::$config = [
+                'type'      => $mysql['type'],
+                'host'      => $mysql['hostname'],
+                'port'      => $mysql['hostport'],
+                'database'  => $mysql['database'],
+                'username'  => $mysql['username'],
+                'password'  => $mysql['password'],
+                'charset'   => $mysql['charset'],
+                'prefix'    => $mysql['prefix'],
+            ];
+        }
+        return self::$config;
+    }
+
+    /**
      * 获取数据库连接实例（单例模式）
      */
     public static function getInstance()
     {
         if (self::$instance === null) {
-            self::$config = require __DIR__ . '/../config/database.php';
+            $config = self::loadConfig();
             
             $dsn = sprintf(
                 "%s:host=%s;port=%s;dbname=%s;charset=%s",
-                self::$config['type'],
-                self::$config['host'],
-                self::$config['port'],
-                self::$config['database'],
-                self::$config['charset']
+                $config['type'],
+                $config['host'],
+                $config['port'],
+                $config['database'],
+                $config['charset']
             );
 
             try {
                 self::$instance = new PDO(
                     $dsn,
-                    self::$config['username'],
-                    self::$config['password'],
+                    $config['username'],
+                    $config['password'],
                     [
                         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -50,10 +75,8 @@ class Database
      */
     public static function getPrefix()
     {
-        if (self::$config === null) {
-            self::$config = require __DIR__ . '/../config/database.php';
-        }
-        return self::$config['prefix'];
+        $config = self::loadConfig();
+        return $config['prefix'];
     }
 
     /**

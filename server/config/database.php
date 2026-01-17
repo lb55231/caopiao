@@ -34,8 +34,8 @@ return [
             'hostport'        => '3307',
             // 数据库连接参数
             'params'          => [],
-            // 数据库编码默认采用utf8
-            'charset'         => 'utf8',
+            // 数据库编码默认采用utf8mb4（支持emoji等特殊字符）
+            'charset'         => 'utf8mb4',
             // 数据库表前缀
             'prefix'          => 'caipiao_',
             // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)

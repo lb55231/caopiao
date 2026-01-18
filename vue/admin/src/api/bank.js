@@ -26,7 +26,7 @@ export function updateSysBank(data) {
  * 删除提款银行
  */
 export function deleteSysBank(id) {
-  return request.delete(`/sysbank/delete?id=${id}`)
+  return request.delete(`/admin/sysbank/delete?id=${id}`)
 }
 
 /**
@@ -62,7 +62,7 @@ export function updateLineBank(data) {
  * 删除存款方式
  */
 export function deleteLineBank(id) {
-  return request.delete(`/linebank/delete?id=${id}`)
+  return request.delete(`/admin/linebank/delete?id=${id}`)
 }
 
 /**
@@ -98,7 +98,7 @@ export function updatePaySet(data) {
  * 删除存款方式
  */
 export function deletePaySet(id) {
-  return request.delete(`/payset/delete?id=${id}`)
+  return request.delete(`/admin/payset/delete?id=${id}`)
 }
 
 /**
@@ -134,7 +134,7 @@ export function auditRecharge(data) {
  * 删除充值记录
  */
 export function deleteRecharge(id) {
-  return request.delete(`/recharge/delete?id=${id}`)
+  return request.delete(`/admin/recharge/delete?id=${id}`)
 }
 
 // ==================== 提现记录 ====================
@@ -156,6 +156,6 @@ export function auditWithdraw(data) {
  * 删除提现记录
  */
 export function deleteWithdraw(id) {
-  return request.delete(`/withdraw/delete?id=${id}`)
+  return request.delete(`/admin/withdraw/delete?id=${id}`)
 }
 

@@ -4,9 +4,28 @@
 
   # 静态资源直接访问，不走框架路由
   RewriteRule ^uploads/ - [L]
-  RewriteRule \.(jpg|jpeg|png|gif|webp|css|js|ico|svg|woff|woff2|ttf|eot)$ - [L]
+  RewriteRule \.(jpg|jpeg|png|gif|webp|css|js|ico|svg|woff|woff2|ttf|eot|map)$ - [L]
 
-  # 其他请求如果不是真实文件或目录，则转发到 index.php
+  # 前端 SPA 路由支持
+  # 移动端 H5 - /wap/ 路由
+  RewriteCond %{REQUEST_URI} ^/wap/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^wap/ wap/index.html [L]
+
+  # 代理后台 - /agent/ 路由
+  RewriteCond %{REQUEST_URI} ^/agent/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^agent/ agent/index.html [L]
+
+  # 管理后台 - /admin/ 路由
+  RewriteCond %{REQUEST_URI} ^/admin/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^admin/ admin/index.html [L]
+
+  # API 请求转发到 ThinkPHP
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]

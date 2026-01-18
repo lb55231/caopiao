@@ -1,11 +1,11 @@
-import adminRequest from '@/utils/adminRequest'
+import request from '@/utils/request'
 
 /**
  * 获取彩种列表
  */
 export function getLotteryTypes(params) {
-  return adminRequest({
-    url: '/lottery/types',
+  return request({
+    url: '/admin/lottery/types',
     method: 'get',
     params
   })
@@ -15,8 +15,8 @@ export function getLotteryTypes(params) {
  * 添加彩种
  */
 export function addLotteryType(data) {
-  return adminRequest({
-    url: '/lottery/type/add',
+  return request({
+    url: '/admin/lottery/type/add',
     method: 'post',
     data
   })
@@ -26,8 +26,8 @@ export function addLotteryType(data) {
  * 更新彩种
  */
 export function updateLotteryType(data) {
-  return adminRequest({
-    url: '/lottery/type/update/' + data.id,
+  return request({
+    url: '/admin/lottery/type/update/' + data.id,
     method: 'put',
     data
   })
@@ -37,8 +37,8 @@ export function updateLotteryType(data) {
  * 删除彩种
  */
 export function deleteLotteryType(data) {
-  return adminRequest({
-    url: '/lottery/type/delete/' + data.id,
+  return request({
+    url: '/admin/lottery/type/delete/' + data.id,
     method: 'delete',
     data
   })
@@ -48,8 +48,8 @@ export function deleteLotteryType(data) {
  * 切换彩种状态
  */
 export function toggleLotteryStatus(data) {
-  return adminRequest({
-    url: '/lottery/toggle-status',
+  return request({
+    url: '/admin/lottery/toggle-status',
     method: 'post',
     data
   })
@@ -59,8 +59,8 @@ export function toggleLotteryStatus(data) {
  * 保存彩种排序
  */
 export function saveLotteryOrder(data) {
-  return adminRequest({
-    url: '/lottery/save-order',
+  return request({
+    url: '/admin/lottery/save-order',
     method: 'post',
     data
   })
@@ -72,8 +72,8 @@ export function saveLotteryOrder(data) {
  * 获取开奖记录列表
  */
 export function getLotteryResults(params) {
-  return adminRequest({
-    url: '/lottery/results',
+  return request({
+    url: '/admin/lottery/results',
     method: 'get',
     params
   })
@@ -83,8 +83,8 @@ export function getLotteryResults(params) {
  * 添加开奖记录（手动开奖）
  */
 export function addLotteryResult(data) {
-  return adminRequest({
-    url: '/lottery/result/add',
+  return request({
+    url: '/admin/lottery/result/add',
     method: 'post',
     data
   })
@@ -94,8 +94,8 @@ export function addLotteryResult(data) {
  * 删除开奖记录
  */
 export function deleteLotteryResult(data) {
-  return adminRequest({
-    url: '/lottery/result/delete/' + data.id,
+  return request({
+    url: '/admin/lottery/result/delete/' + data.id,
     method: 'delete',
     data
   })
@@ -107,8 +107,8 @@ export function deleteLotteryResult(data) {
  * 获取投注记录列表
  */
 export function getBetRecords(params) {
-  return adminRequest({
-    url: '/bet/records',
+  return request({
+    url: '/admin/bet/records',
     method: 'get',
     params
   })
@@ -120,8 +120,8 @@ export function getBetRecords(params) {
  * 获取预开奖列表
  */
 export function getYukaijiang(params) {
-  return adminRequest({
-    url: '/yukaijiang',
+  return request({
+    url: '/admin/yukaijiang',
     method: 'get',
     params
   })
@@ -131,8 +131,8 @@ export function getYukaijiang(params) {
  * 保存预开奖号码
  */
 export function saveYkj(data) {
-  return adminRequest({
-    url: '/ykjbaocun',
+  return request({
+    url: '/admin/ykjbaocun',
     method: 'post',
     data
   })

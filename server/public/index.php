@@ -37,16 +37,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
 
 // ============ SPA 路由处理 ============
-// 处理 /wap 前端路由：如果是 /wap 开头但不是 API 也不是静态资源，返回 index.html
-if ($requestUri && strpos($requestUri, '/wap') === 0 && strpos($requestUri, '/api') === false) {
-    // 检查是否是静态资源文件
-    if (!preg_match('/\.(jpg|jpeg|png|gif|webp|css|js|ico|svg|woff|woff2|ttf|eot|html)$/i', $requestUri)) {
-        // 不是静态资源，可能是前端路由，返回 index.html
-        $indexPath = __DIR__ . '/wap/index.html';
-        if (file_exists($indexPath)) {
-            header('Content-Type: text/html; charset=utf-8');
-            readfile($indexPath);
-            exit;
+// 处理前端路由：/wap 和 /admin
+if ($requestUri && strpos($requestUri, '/api') === false) {
+    // 检查是否是前端应用路径
+    if (strpos($requestUri, '/wap') === 0 || strpos($requestUri, '/admin') === 0 || strpos($requestUri, '/agent') === 0) {
+        // 检查是否是静态资源文件
+        if (!preg_match('/\.(jpg|jpeg|png|gif|webp|css|js|ico|svg|woff|woff2|ttf|eot|html)$/i', $requestUri)) {
+            // 不是静态资源，可能是前端路由，返回对应的 index.html
+            if (strpos($requestUri, '/wap') === 0) {
+                $indexPath = __DIR__ . '/wap/index.html';
+            } elseif (strpos($requestUri, '/admin') === 0) {
+                $indexPath = __DIR__ . '/admin/index.html';
+            } elseif (strpos($requestUri, '/agent') === 0) {
+                $indexPath = __DIR__ . '/agent/index.html';
+            }
+            
+            if (isset($indexPath) && file_exists($indexPath)) {
+                header('Content-Type: text/html; charset=utf-8');
+                readfile($indexPath);
+                exit;
+            }
         }
     }
 }

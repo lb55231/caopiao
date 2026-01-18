@@ -6,8 +6,6 @@
 const development = {
   // API基础路径
   baseURL: 'http://127.0.0.1:8000/api',
-  // 管理后台API基础路径
-  adminBaseURL: 'http://127.0.0.1:8000/api/admin',
   // 静态资源基础路径（图片、文件等）
   resourceURL: 'http://127.0.0.1:8000',
   // 超时时间
@@ -16,12 +14,10 @@ const development = {
 
 // 生产环境配置
 const production = {
-  // API基础路径 - 生产环境请修改为实际的域名
+  // API基础路径
   baseURL: '/api',
-  // 管理后台API基础路径
-  adminBaseURL: 'http://127.0.0.1:8000',
-  // 静态资源基础路径
-  resourceURL: 'http://127.0.0.1:8000',
+  // 静态资源基础路径（使用当前域名）
+  resourceURL: '',
   // 超时时间
   timeout: 30000
 }

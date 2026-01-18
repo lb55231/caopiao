@@ -1,10 +1,11 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import router from '@/router'
+import env from '@/config/env'
 
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api',
+  baseURL: env.baseURL,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json'

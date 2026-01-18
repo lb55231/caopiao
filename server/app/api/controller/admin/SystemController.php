@@ -259,20 +259,25 @@ class SystemController extends AdminBaseController
 
         try {
             // 检查是否有文件上传
-            if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
-                return $this->error('请选择要上传的文件');
+            if (!isset($_FILES['file'])) {
+                return $this->error('未接收到上传文件');
             }
 
             $file = $_FILES['file'];
-
-            // 验证文件类型
-            $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $mimeType = finfo_file($finfo, $file['tmp_name']);
-            finfo_close($finfo);
-
-            if (!in_array($mimeType, $allowedTypes)) {
-                return $this->error('只允许上传图片文件（jpg, png, gif, webp）');
+            
+            // 检查上传错误
+            if ($file['error'] !== UPLOAD_ERR_OK) {
+                $errorMessages = [
+                    UPLOAD_ERR_INI_SIZE => '文件大小超过 php.ini 中 upload_max_filesize 限制',
+                    UPLOAD_ERR_FORM_SIZE => '文件大小超过表单中 MAX_FILE_SIZE 限制',
+                    UPLOAD_ERR_PARTIAL => '文件只有部分被上传',
+                    UPLOAD_ERR_NO_FILE => '没有文件被上传',
+                    UPLOAD_ERR_NO_TMP_DIR => '找不到临时文件夹',
+                    UPLOAD_ERR_CANT_WRITE => '文件写入失败',
+                    UPLOAD_ERR_EXTENSION => 'PHP扩展阻止了文件上传',
+                ];
+                $errorMsg = $errorMessages[$file['error']] ?? '未知上传错误（错误代码：' . $file['error'] . '）';
+                return $this->error($errorMsg);
             }
 
             // 验证文件大小（最大5MB）
@@ -281,21 +286,40 @@ class SystemController extends AdminBaseController
                 return $this->error('文件大小不能超过5MB');
             }
 
+            // 获取文件扩展名并验证（使用扩展名代替 MIME 类型检测）
+            $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+            
+            if (!in_array($extension, $allowedExtensions)) {
+                return $this->error('只允许上传图片文件（jpg, jpeg, png, gif, webp）');
+            }
+
+            // 可选：使用 getimagesize 进一步验证是否为真实图片
+            $imageInfo = @getimagesize($file['tmp_name']);
+            if ($imageInfo === false) {
+                return $this->error('上传的文件不是有效的图片');
+            }
+
             // 生成文件名
-            $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
             $fileName = date('YmdHis') . '_' . uniqid() . '.' . $extension;
 
             // 创建上传目录
             $uploadDir = app()->getRootPath() . 'public/uploads/images/' . date('Ymd') . '/';
             if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
+                if (!mkdir($uploadDir, 0777, true)) {
+                    return $this->error('创建上传目录失败，请检查目录权限');
+                }
+                @chmod($uploadDir, 0777);
             }
 
             // 移动文件
             $filePath = $uploadDir . $fileName;
             if (!move_uploaded_file($file['tmp_name'], $filePath)) {
-                return $this->error('文件上传失败');
+                return $this->error('文件移动失败，请检查目录权限');
             }
+
+            // 设置文件权限
+            @chmod($filePath, 0644);
 
             // 返回文件URL
             $fileUrl = '/uploads/images/' . date('Ymd') . '/' . $fileName;

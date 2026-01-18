@@ -148,3 +148,5 @@ Route::rule('agent/finance/profit', '\app\api\controller\agent\FinanceController
 Route::rule('agent/lottery/types', '\app\api\controller\agent\LotteryController@types', 'GET');
 Route::rule('agent/lottery/results', '\app\api\controller\agent\LotteryController@results', 'GET');
 Route::rule('agent/lottery/bet-records', '\app\api\controller\agent\LotteryController@betRecords', 'GET');
+Route::rule('agent/lottery/yukaijiang', '\app\api\controller\agent\LotteryController@yukaijiang', 'GET');
+Route::rule('agent/lottery/save-yukaijiang', '\app\api\controller\agent\LotteryController@saveYukaijiang', 'POST');

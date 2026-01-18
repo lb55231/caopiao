@@ -122,8 +122,32 @@ export function cancelOrder(id) {
  */
 export function getOrderStatistics(params) {
   return request({
-    url: '/lottery/orders/statistics',
+    url: '/agent/lottery/orders/statistics',
     method: 'get',
     params
+  })
+}
+
+/**
+ * 获取预开奖列表
+ * @param {Object} params 查询参数
+ */
+export function getYukaijiangList(params) {
+  return request({
+    url: '/agent/lottery/yukaijiang',
+    method: 'get',
+    params
+  })
+}
+
+/**
+ * 保存预开奖号码
+ * @param {Object} data 开奖数据
+ */
+export function saveYukaijiang(data) {
+  return request({
+    url: '/agent/lottery/save-yukaijiang',
+    method: 'post',
+    data
   })
 }

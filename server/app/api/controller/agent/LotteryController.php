@@ -241,4 +241,323 @@ class LotteryController extends AgentBaseController
             return $this->error('操作失败：' . $e->getMessage());
         }
     }
+
+    /**
+     * 获取预开奖列表（与后台完全一致）
+     */
+    public function yukaijiang()
+    {
+        if (!$this->request->isGet()) {
+            return $this->error('请使用GET请求');
+        }
+
+        try {
+            $pdo = $this->getDb();
+            $prefix = $this->getPrefix();
+
+            // 获取所有开启的彩种
+            $stmt = $pdo->query("SELECT * FROM {$prefix}caipiao WHERE isopen = 1 ORDER BY typeid DESC");
+            $cplist = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // 过滤掉某些彩种
+            $my_list = [];
+            foreach ($cplist as $v) {
+                if (!in_array($v['name'], ['lhc', 'fc3d', 'pl3', 'jxk3'])) {
+                    $my_list[] = $v;
+                }
+            }
+
+            $name = $this->request->param('name', '');
+            if (!$name && count($my_list) > 0) {
+                $name = $my_list[0]['name'];
+            }
+
+            // 查找当前彩种信息
+            $cpinfo = null;
+            foreach ($cplist as $v) {
+                if ($v['name'] === $name) {
+                    $cpinfo = $v;
+                    break;
+                }
+            }
+
+            if (!$cpinfo) {
+                return $this->error('彩种不存在');
+            }
+
+            $typeid = $cpinfo['typeid'];
+            $expecttime = $cpinfo['expecttime'];
+            $_expecttime = $expecttime * 60;
+            $totalcount = floor(abs(strtotime($cpinfo['closetime2']) - strtotime($cpinfo['closetime1'])) / $_expecttime);
+            $_length = $totalcount >= 1000 ? 4 : 3;
+            $jgtime = $expecttime * 60;
+            $_t = time();
+            $_t1 = strtotime(date('Y-m-d ') . $cpinfo['closetime1']);
+
+            // 计算当前期号
+            if ($_t < $_t1) {
+                $actNo_t = $totalcount;
+            } else {
+                $actNo_t = ($_t - strtotime(date('Y-m-d ') . $cpinfo['closetime1']) + intval($cpinfo['ftime'])) / $_expecttime;
+            }
+            $actNo_t = floor($actNo_t);
+            $actNo = is_numeric($actNo_t) ? ($actNo_t == $totalcount ? 1 : $actNo_t + 1) : ceil($actNo_t);
+
+            // 生成待开奖期号列表（未来20期）
+            $openlist = [];
+
+            if ($cpinfo['issys'] == 1) {
+                // 系统彩
+                if ($actNo > $totalcount) {
+                    if ($_t > strtotime($cpinfo['closetime2'])) {
+                        // 跨天到明天
+                        for ($j = 20; $j >= 1; $j--) {
+                            $rand_keys = $this->returnrankey($cpinfo['typeid']);
+                            if ($cpinfo['typeid'] == 'k3' || $cpinfo['typeid'] == 'keno') sort($rand_keys);
+                            $opentime = date('Y-m-d H:i:s', strtotime($cpinfo['closetime1']) + $j * $jgtime + 86400);
+                            $expect = str_pad($j, $_length, 0, STR_PAD_LEFT);
+                            $openlist[] = [
+                                'expect' => date('Ymd', strtotime('+1 day')) . $expect,
+                                'opencode' => implode(',', $rand_keys),
+                                'opentime' => $opentime,
+                                'cptitle' => $cpinfo['title'],
+                                'name' => $cpinfo['name']
+                            ];
+                        }
+                    } else {
+                        for ($j = 20; $j >= 1; $j--) {
+                            $rand_keys = $this->returnrankey($cpinfo['typeid']);
+                            if ($cpinfo['typeid'] == 'k3' || $cpinfo['typeid'] == 'keno') sort($rand_keys);
+                            $opentime = date('Y-m-d H:i:s', strtotime($cpinfo['closetime1']) + $j * $jgtime + 86400);
+                            $expect = str_pad($j, $_length, 0, STR_PAD_LEFT);
+                            $openlist[] = [
+                                'expect' => date('Ymd', strtotime('+1 day')) . $expect,
+                                'opencode' => implode(',', $rand_keys),
+                                'opentime' => $opentime,
+                                'cptitle' => $cpinfo['title'],
+                                'name' => $cpinfo['name']
+                            ];
+                        }
+                    }
+                } else {
+                    if ($actNo + 19 <= $totalcount) {
+                        for ($j = $actNo + 19; $j >= $actNo; $j--) {
+                            $rand_keys = $this->returnrankey($cpinfo['typeid']);
+                            if ($cpinfo['typeid'] == 'k3' || $cpinfo['typeid'] == 'keno') sort($rand_keys);
+                            $opentime = date('Y-m-d H:i:s', strtotime($cpinfo['closetime2']) - ($totalcount - $j) * $jgtime);
+                            $expect = str_pad($j, $_length, 0, STR_PAD_LEFT);
+                            $openlist[] = [
+                                'expect' => date('Ymd') . $expect,
+                                'opencode' => implode(',', $rand_keys),
+                                'opentime' => $opentime,
+                                'cptitle' => $cpinfo['title'],
+                                'name' => $cpinfo['name']
+                            ];
+                        }
+                    } else {
+                        for ($j = $totalcount; $j >= $actNo; $j--) {
+                            $rand_keys = $this->returnrankey($cpinfo['typeid']);
+                            if ($cpinfo['typeid'] == 'k3' || $cpinfo['typeid'] == 'keno') sort($rand_keys);
+                            $opentime = date('Y-m-d H:i:s', strtotime($cpinfo['closetime2']) - ($totalcount - $j) * $jgtime);
+                            $expect = str_pad($j, $_length, 0, STR_PAD_LEFT);
+                            $openlist[] = [
+                                'expect' => date('Ymd') . $expect,
+                                'opencode' => implode(',', $rand_keys),
+                                'opentime' => $opentime,
+                                'cptitle' => $cpinfo['title'],
+                                'name' => $cpinfo['name']
+                            ];
+                        }
+                    }
+                }
+            }
+
+            // 查询已开奖的期号（需要过滤掉）
+            $kaijiangStmt = $pdo->prepare("SELECT expect FROM {$prefix}kaijiang WHERE name = :name");
+            $kaijiangStmt->execute([':name' => $name]);
+            $kaijiangList = $kaijiangStmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            $kaijiangExpects = [];
+            foreach ($kaijiangList as $kj) {
+                $kaijiangExpects[$kj['expect']] = true;
+            }
+
+            // 查询预开奖表，标记已保存的期号
+            $yukaijiangStmt = $pdo->prepare("SELECT * FROM {$prefix}yukaijiang WHERE name = :name AND hid = 0");
+            $yukaijiangStmt->execute([':name' => $name]);
+            $yukaijiangList = $yukaijiangStmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            $yukaijiangMap = [];
+            foreach ($yukaijiangList as $ykj) {
+                $yukaijiangMap[$ykj['expect']] = $ykj;
+            }
+
+            // 过滤已开奖的期号，并标记预开奖状态
+            $filteredOpenlist = [];
+            foreach ($openlist as $v) {
+                // 如果该期号已经在开奖表中，则跳过
+                if (isset($kaijiangExpects[$v['expect']])) {
+                    continue;
+                }
+                
+                $v['isbc'] = 0;
+                $v['stateadmin'] = '';
+                if (isset($yukaijiangMap[$v['expect']])) {
+                    $v['opencode'] = $yukaijiangMap[$v['expect']]['opencode'];
+                    $v['isbc'] = 1;
+                    $v['stateadmin'] = $yukaijiangMap[$v['expect']]['stateadmin'] ?? '';
+                }
+                $filteredOpenlist[] = $v;
+            }
+            
+            $openlist = $filteredOpenlist;
+
+            // 按期号排序
+            usort($openlist, function($a, $b) {
+                return strcmp($a['expect'], $b['expect']);
+            });
+
+            return $this->success('获取成功', [
+                'cplist' => $my_list,
+                'openlist' => $openlist,
+                'typeid' => $typeid,
+                'cpname' => $name
+            ]);
+
+        } catch (\Exception $e) {
+            return $this->error('操作失败：' . $e->getMessage());
+        }
+    }
+
+    /**
+     * 生成随机号码（与后台一致）
+     */
+    private function returnrankey($typeid)
+    {
+        $rand_keys = [];
+        
+        if ($typeid == 'k3') {
+            for ($i = 0; $i < 3; $i++) {
+                $rand_keys[] = mt_rand(1, 6);
+            }
+        } elseif ($typeid == 'ssc' || $typeid == 'dpc') {
+            for ($i = 0; $i < 5; $i++) {
+                $rand_keys[] = mt_rand(0, 9);
+            }
+        } elseif ($typeid == 'pk10') {
+            $nums = range(1, 10);
+            shuffle($nums);
+            for ($i = 0; $i < 10; $i++) {
+                $rand_keys[] = str_pad($nums[$i], 2, '0', STR_PAD_LEFT);
+            }
+        } elseif ($typeid == 'x5') {
+            $nums = range(1, 11);
+            shuffle($nums);
+            for ($i = 0; $i < 5; $i++) {
+                $rand_keys[] = str_pad($nums[$i], 2, '0', STR_PAD_LEFT);
+            }
+        } elseif ($typeid == 'keno') {
+            $nums = range(1, 80);
+            shuffle($nums);
+            for ($i = 0; $i < 20; $i++) {
+                $rand_keys[] = str_pad($nums[$i], 2, '0', STR_PAD_LEFT);
+            }
+        }
+        
+        return $rand_keys;
+    }
+
+    /**
+     * 保存预开奖号码
+     */
+    public function saveYukaijiang()
+    {
+        if (!$this->request->isPost()) {
+            return $this->error('请使用POST请求');
+        }
+
+        try {
+            $pdo = $this->getDb();
+            $prefix = $this->getPrefix();
+
+            $input = $this->request->post();
+            $expect = $input['expect'] ?? '';
+            $name = $input['name'] ?? '';
+            $opentime = $input['opentime'] ?? '';
+
+            if (!$expect || !$name) {
+                return $this->error('参数错误：缺少必要参数');
+            }
+
+            // 拼接开奖号码
+            $opencode = $input['opencode'] ?? '';
+            if (!$opencode) {
+                // 从 opencode1, opencode2... 拼接
+                $codes = [];
+                for ($i = 1; $i <= 20; $i++) {
+                    $codeKey = 'opencode' . $i;
+                    if (isset($input[$codeKey]) && $input[$codeKey] !== '') {
+                        $codes[] = $input[$codeKey];
+                    }
+                }
+                $opencode = implode(',', $codes);
+            }
+
+            if (!$opencode) {
+                return $this->error('请填写开奖号码');
+            }
+
+            // 转换时间
+            $opentimeTimestamp = $opentime ? strtotime(str_replace('：', ':', $opentime)) : time();
+
+            // 检查是否已存在
+            $checkStmt = $pdo->prepare("
+                SELECT id FROM {$prefix}yukaijiang 
+                WHERE name = :name AND expect = :expect
+            ");
+            $checkStmt->execute([':name' => $name, ':expect' => $expect]);
+            $exists = $checkStmt->fetch();
+
+            if ($exists) {
+                // 更新
+                $updateStmt = $pdo->prepare("
+                    UPDATE {$prefix}yukaijiang 
+                    SET opencode = :opencode, opentime = :opentime, stateadmin = :stateadmin
+                    WHERE name = :name AND expect = :expect
+                ");
+                $result = $updateStmt->execute([
+                    ':opencode' => $opencode,
+                    ':opentime' => $opentimeTimestamp,
+                    ':stateadmin' => $this->agentInfo['username'] ?? '',
+                    ':name' => $name,
+                    ':expect' => $expect
+                ]);
+            } else {
+                // 插入
+                $insertStmt = $pdo->prepare("
+                    INSERT INTO {$prefix}yukaijiang 
+                    (name, expect, opencode, opentime, stateadmin)
+                    VALUES (:name, :expect, :opencode, :opentime, :stateadmin)
+                ");
+                $result = $insertStmt->execute([
+                    ':name' => $name,
+                    ':expect' => $expect,
+                    ':opencode' => $opencode,
+                    ':opentime' => $opentimeTimestamp,
+                    ':stateadmin' => $this->agentInfo['username'] ?? ''
+                ]);
+            }
+
+            if ($result) {
+                return $this->success('保存成功', [
+                    'stateadmin' => $this->agentInfo['username'] ?? ''
+                ]);
+            } else {
+                return $this->error('保存失败');
+            }
+
+        } catch (\Exception $e) {
+            return $this->error('操作失败：' . $e->getMessage());
+        }
+    }
 }

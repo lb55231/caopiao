@@ -298,19 +298,21 @@ const mainOptions = [
 ]
 
 // 品牌列表
+const baseUrl = import.meta.env.BASE_URL
+const headerBgUrl = `url(${baseUrl}resources/k4/img_1.png)`
 const brandList = [
-  { code: '3', name: '李宁', logo: '/resources/k4/5.jpg' },
-  { code: '4', name: '361°', logo: '/resources/k4/6.jpg' },
-  { code: '5', name: '鸿星尔克', logo: '/resources/k4/7.jpg' },
-  { code: '6', name: '顺丰', logo: '/resources/k4/8.jpg' },
-  { code: '7', name: '百雀羚', logo: '/resources/k4/9.jpg' },
-  { code: '8', name: '自然堂', logo: '/resources/k4/10.jpg' },
-  { code: '9', name: '华为', logo: '/resources/k4/11.jpg' },
-  { code: '10', name: '中兴', logo: '/resources/k4/12.jpg' },
-  { code: '11', name: 'VIVO', logo: '/resources/k4/13.jpg' },
-  { code: '12', name: '苏宁', logo: '/resources/k4/14.jpg' },
-  { code: '13', name: '美的', logo: '/resources/k4/15.jpg' },
-  { code: '14', name: '格力', logo: '/resources/k4/16.jpg' }
+  { code: '3', name: '李宁', logo: baseUrl + 'resources/k4/5.jpg' },
+  { code: '4', name: '361°', logo: baseUrl + 'resources/k4/6.jpg' },
+  { code: '5', name: '鸿星尔克', logo: baseUrl + 'resources/k4/7.jpg' },
+  { code: '6', name: '顺丰', logo: baseUrl + 'resources/k4/8.jpg' },
+  { code: '7', name: '百雀羚', logo: baseUrl + 'resources/k4/9.jpg' },
+  { code: '8', name: '自然堂', logo: baseUrl + 'resources/k4/10.jpg' },
+  { code: '9', name: '华为', logo: baseUrl + 'resources/k4/11.jpg' },
+  { code: '10', name: '中兴', logo: baseUrl + 'resources/k4/12.jpg' },
+  { code: '11', name: 'VIVO', logo: baseUrl + 'resources/k4/13.jpg' },
+  { code: '12', name: '苏宁', logo: baseUrl + 'resources/k4/14.jpg' },
+  { code: '13', name: '美的', logo: baseUrl + 'resources/k4/15.jpg' },
+  { code: '14', name: '格力', logo: baseUrl + 'resources/k4/16.jpg' }
 ]
 
 // 选中的号码（存储完整的选项对象，包含playid等信息）
@@ -716,7 +718,7 @@ onUnmounted(() => {
 
 .result-header, .countdown-header {
   font-size: 16px;
-  background: url(/resources/k4/img_1.png);
+  background-image: v-bind(headerBgUrl);
   background-size: 100% 100%;
   padding: 2px 26px 2px 14px;
   color: #fff;

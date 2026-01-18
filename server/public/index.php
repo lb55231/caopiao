@@ -35,6 +35,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // ============ 静态资源保护（PHP 内置服务器） ============
 // 如果请求的是静态文件且文件存在，直接返回
 $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+
+// ============ SPA 路由处理 ============
+// 处理 /wap 前端路由：如果是 /wap 开头但不是 API 也不是静态资源，返回 index.html
+if ($requestUri && strpos($requestUri, '/wap') === 0 && strpos($requestUri, '/api') === false) {
+    // 检查是否是静态资源文件
+    if (!preg_match('/\.(jpg|jpeg|png|gif|webp|css|js|ico|svg|woff|woff2|ttf|eot|html)$/i', $requestUri)) {
+        // 不是静态资源，可能是前端路由，返回 index.html
+        $indexPath = __DIR__ . '/wap/index.html';
+        if (file_exists($indexPath)) {
+            header('Content-Type: text/html; charset=utf-8');
+            readfile($indexPath);
+            exit;
+        }
+    }
+}
+// ============ SPA 路由处理结束 ============
+
 if ($requestUri && preg_match('/\.(jpg|jpeg|png|gif|webp|css|js|ico|svg|woff|woff2|ttf|eot)$/i', $requestUri)) {
     $filePath = __DIR__ . $requestUri;
     if (file_exists($filePath) && is_file($filePath)) {

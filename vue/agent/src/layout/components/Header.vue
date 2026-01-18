@@ -24,14 +24,6 @@
         </div>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item command="profile">
-              <el-icon><User /></el-icon>
-              个人中心
-            </el-dropdown-item>
-            <el-dropdown-item command="password">
-              <el-icon><Lock /></el-icon>
-              修改密码
-            </el-dropdown-item>
             <el-dropdown-item divided command="logout">
               <el-icon><SwitchButton /></el-icon>
               退出登录

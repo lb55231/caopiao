@@ -62,12 +62,7 @@
             重置
           </el-button>
         </div>
-        <div class="toolbar-right">
-          <el-button type="success" @click="handleExport">
-            <el-icon><Download /></el-icon>
-            导出
-          </el-button>
-        </div>
+        
       </div>
       
       <!-- 统计信息 -->
@@ -284,9 +279,7 @@ const handleReset = () => {
   handleSearch()
 }
 
-const handleExport = () => {
-  ElMessage.info('导出功能开发中...')
-}
+
 
 const handleDetail = (row) => {
   ElMessage.info(`查看注单 ${row.orderNo} 详情...`)

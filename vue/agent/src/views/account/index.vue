@@ -61,10 +61,6 @@
       <template #header>
         <div class="card-header">
           <span>账户详情</span>
-          <el-button type="primary" size="small" @click="handleEdit">
-            <el-icon><Edit /></el-icon>
-            编辑资料
-          </el-button>
         </div>
       </template>
       

@@ -69,24 +69,16 @@
         </el-table-column>
         <el-table-column prop="isopen" label="开启状态" width="100" align="center">
           <template #default="{ row }">
-            <el-switch
-              v-model="row.isopen"
-              :active-value="1"
-              :inactive-value="0"
-              @change="handleStatusChange(row, 'isopen')"
-            />
+            <el-tag :type="row.isopen == 1 ? 'success' : 'info'">
+              {{ row.isopen == 1 ? '正常' : '关闭' }}
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="iswh" label="维护状态" width="100" align="center">
           <template #default="{ row }">
-            <el-switch
-              v-model="row.iswh"
-              :active-value="1"
-              :inactive-value="0"
-              active-text="维护"
-              inactive-text="正常"
-              @change="handleStatusChange(row, 'iswh')"
-            />
+            <el-tag :type="row.iswh == 1 ? 'warning' : 'success'">
+              {{ row.iswh == 1 ? '维护中' : '正常' }}
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="120" align="center" fixed="right">
@@ -175,14 +167,8 @@ const handleReset = () => {
   searchForm.keyword = ''
 }
 
-const handleStatusChange = async (row, field) => {
-  ElMessage.warning('代理端不支持修改彩种状态')
-  // 恢复原状态
-  row[field] = row[field] === 1 ? 0 : 1
-}
-
 const handleEdit = (row) => {
-  ElMessage.info(`编辑 ${row.title}...`)
+  ElMessage.info('代理端暂不支持编辑彩种信息')
 }
 
 onMounted(() => {

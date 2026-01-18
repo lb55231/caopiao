@@ -2,8 +2,7 @@
   <el-container class="layout-container">
     <el-aside :width="isCollapse ? '64px' : '220px'" class="layout-aside">
       <div class="logo-container">
-        <img src="/logo.png" alt="logo" v-if="!isCollapse" />
-        <span v-if="!isCollapse" class="logo-text">代理管理系统</span>
+        <span v-if="!isCollapse" class="logo-text">代理系统</span>
       </div>
       <Sidebar :is-collapse="isCollapse" />
     </el-aside>

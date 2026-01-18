@@ -2,7 +2,7 @@
   <div class="login-container">
     <div class="login-box">
       <div class="login-header">
-        <h2>代理管理系统</h2>
+        <h2>代理系统</h2>
         <p>Agent Management System</p>
       </div>
       

@@ -16,12 +16,13 @@ const development = {
 
 // 生产环境配置
 const production = {
-  // API基础路径
   baseURL: '/api',
-  // 管理后台API基础路径（用于上传等特殊接口）
-  adminBaseURL: '/api/admin',
-  // 静态资源基础路径（使用当前域名）
-  resourceURL: '',
+  get adminBaseURL() {
+    return window.location.origin + '/api/admin'
+  },
+  get resourceURL() {
+    return window.location.origin
+  },
   // 超时时间
   timeout: 30000
 }
